@@ -2,6 +2,7 @@ import { AfterViewInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import Konva from 'konva';
 import { Point } from './point.model';
+import { Shape } from './shape.model';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('shapeCounter') shapeCounter: ElementRef;
 
   private shape: any;
-  private shapes: any[] = [];
+  private shapes: Shape[] = [];
   private points: Point[] = [];
   private lastPoint: any;
   private layer: Konva.Layer;
@@ -137,12 +138,7 @@ export class AppComponent implements AfterViewInit {
    */
   public saveShape(shape: Konva.Line) {
     console.log('SAVING shape');
-    // TODO find out how to detect 'line' and 'polygon'
-    this.shapes.push({
-      id: uuidv4(),
-      type: 'line',
-      points: shape.attrs['points'],
-    });
+    this.shapes.push(new Shape(uuidv4(), 'line', shape.attrs['points']));
     console.log(this.shapes[this.shapes.length - 1]);
   }
 
