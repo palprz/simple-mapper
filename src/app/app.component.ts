@@ -1,6 +1,7 @@
 import { AfterViewInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import Konva from 'konva';
+import { Point } from './point.model';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ export class AppComponent implements AfterViewInit {
 
   private shape: any;
   private shapes: any[] = [];
-  private points: any[] = [];
+  private points: Point[] = [];
   private lastPoint: any;
   private layer: Konva.Layer;
 
@@ -30,17 +31,21 @@ export class AppComponent implements AfterViewInit {
   }
 
   // START: Main interaction with layer
+  /**
+   * Handle click on the layer to create a point.
+   * @param event contains X and Y coordinates
+   */
   public clickedPoint(event: any) {
-    var point = { x: event.offsetX, y: event.offsetY };
+    var point = new Point(event.offsetX, event.offsetY);
 
     if (this.shape === undefined) {
       this.startLine();
     }
 
     if (
-      this.lastPoint !== undefined &&
-      this.lastPoint.x === point.x &&
-      this.lastPoint.y === point.y
+      this.lastPoint &&
+      this.lastPoint.getX() === point.getX() &&
+      this.lastPoint.getY() === point.getY()
     ) {
       this.stopLine();
     } else {
@@ -48,17 +53,24 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  /**
+   * Handle move of the mouse to predict next point on the layer.
+   * @param event contains X and Y coordinates
+   */
   public movedMouse(event: any) {
     if (this.lastPoint === undefined) {
       // last point not defined so cannot draw a line
       return;
     }
 
-    this.calculateLine({ x: event.offsetX, y: event.offsetY });
+    this.calculateLine(new Point(event.offsetX, event.offsetY));
   }
   // END: Main interaction with canvas
 
   // START: shape actions
+  /**
+   * Start the Line and hold it as a class variable.
+   */
   public startLine() {
     console.log('START the line');
     this.shape = new Konva.Line({
@@ -72,6 +84,10 @@ export class AppComponent implements AfterViewInit {
     this.layer.add(this.shape);
   }
 
+  /**
+   * Add new Line based on provided input.
+   * @param newLine contains points to define new Line.
+   */
   public uploadLine(newLine: any) {
     console.log('UPLOAD the line');
     var uploadedLine = new Konva.Line({
@@ -83,23 +99,26 @@ export class AppComponent implements AfterViewInit {
     });
 
     this.layer.add(uploadedLine);
-
-    //update the canvas
     this.layer.draw();
   }
 
+  /**
+   * Update current hold Line by new coordinates.
+   * @param point contains X and Y coordinates
+   */
   public continueLine(point: any) {
     console.log('CONTINUE the line');
-    this.shape.attrs['points'].push(point.x, point.y);
+    this.shape.attrs['points'].push(point.getX(), point.getY());
     this.points.push(point);
 
-    //update the canvas
-    // TODO is working without it... should it be still here?
     this.layer.draw();
     this.updateCounters();
     this.lastPoint = point;
   }
 
+  /**
+   * Stop continuing hold Line. Finished Line will be stored in class variable with rest shapes.
+   */
   public stopLine() {
     console.log('STOP the line');
     this.shape.attrs['stroke'] = 'black';
@@ -112,7 +131,11 @@ export class AppComponent implements AfterViewInit {
     this.updateCounters();
   }
 
-  public saveShape(shape: any) {
+  /**
+   * Store finished shape with rest shapes.
+   * @param shape shape to store
+   */
+  public saveShape(shape: Konva.Line) {
     console.log('SAVING shape');
     // TODO find out how to detect 'line' and 'polygon'
     this.shapes.push({
@@ -123,14 +146,21 @@ export class AppComponent implements AfterViewInit {
     console.log(this.shapes[this.shapes.length - 1]);
   }
 
+  /**
+   * Calculate the place of the new coordinates and define new Line based on predicted values.
+   * @param point the current place of mouse on the stage. Contains X and Y coordinates.
+   */
   public calculateLine(point: any) {
     console.log('Calculating line...');
-    this.shape.attrs['points'].push(point.x, point.y);
+    this.shape.attrs['points'].push(point.getX(), point.getY());
     this.layer.draw();
     this.shape.attrs['points'].pop();
     this.shape.attrs['points'].pop();
   }
 
+  /**
+   * Remove all shapes from the layer and reset stored shapes and points on the layer.
+   */
   public clearLayer() {
     this.layer.removeChildren();
     this.layer.draw();
@@ -157,7 +187,7 @@ export class AppComponent implements AfterViewInit {
         type: 'application/json;charset=utf-8',
       })
     );
-    a.download = 'demo.json';
+    a.download = 'simple-mapper-data.json';
     a.click();
   }
 
@@ -179,10 +209,9 @@ export class AppComponent implements AfterViewInit {
 
       // update array with points
       for (var j = 0; newDatas[i].points.length > j; j = j + 2) {
-        this.points.push({
-          x: newDatas[i].points[j],
-          y: newDatas[i].points[j + 1],
-        });
+        this.points.push(
+          new Point(newDatas[i].points[j], newDatas[i].points[j + 1])
+        );
       }
     }
 
