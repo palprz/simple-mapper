@@ -4,4 +4,4 @@
 <button (click)="download()">Download current canvas</button>
 <label>Upload canvas:</label><input type="file" (change)="handleUploadedFile($event)" />
 
-<div id="canvas-container" (click)="clickedPoint($event)" (mousemove)="movedMouse($event)"></div>
+<div id="canvas-container" (mouseup)="clickedPoint($event)" (mousemove)="movedMouse($event)"></div>

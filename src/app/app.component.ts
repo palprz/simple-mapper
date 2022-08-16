@@ -18,6 +18,7 @@ export class AppComponent implements AfterViewInit {
   private points: Point[] = [];
   private lastPoint: any;
   private layer: Konva.Layer;
+  private isDragAction: boolean;
 
   ngAfterViewInit(): void {
     var stage = new Konva.Stage({
@@ -37,6 +38,11 @@ export class AppComponent implements AfterViewInit {
    * @param event contains X and Y coordinates
    */
   public clickedPoint(event: any) {
+    if (this.isDragAction) {
+      // part of drag action - ignore this click
+      return;
+    }
+
     var point = new Point(event.offsetX, event.offsetY);
 
     if (this.shape === undefined) {
@@ -72,7 +78,7 @@ export class AppComponent implements AfterViewInit {
   /**
    * Start the Line and hold it as a class variable.
    */
-  public startLine() {
+  private startLine() {
     console.log('START the line');
     this.shape = new Konva.Line({
       points: [],
@@ -80,16 +86,39 @@ export class AppComponent implements AfterViewInit {
       strokeWidth: 5,
       lineCap: 'round',
       lineJoin: 'round',
+      draggable: true,
     });
 
+    this.addEventsForShape(this.shape);
     this.layer.add(this.shape);
+  }
+
+  /**
+   * Change cursor for the shape after mouse over it.
+   * @param shape the shape which will have changed cursor
+   */
+  // TODO think how to simplify these events
+  private addEventsForShape(shape: any) {
+    shape.on('mouseover', function () {
+      document.body.style.cursor = 'pointer';
+    });
+    shape.on('mouseout', function () {
+      document.body.style.cursor = 'default';
+    });
+
+    shape.on('dragstart', () => {
+      this.isDragAction = true;
+    });
+    shape.on('dragend', () => {
+      this.isDragAction = false;
+    });
   }
 
   /**
    * Add new Line based on provided input.
    * @param newLine contains points to define new Line.
    */
-  public uploadLine(newLine: any) {
+  private uploadLine(newLine: any) {
     console.log('UPLOAD the line');
     var uploadedLine = new Konva.Line({
       points: [...newLine.points],
@@ -97,8 +126,10 @@ export class AppComponent implements AfterViewInit {
       strokeWidth: 5,
       lineCap: 'round',
       lineJoin: 'round',
+      draggable: true,
     });
 
+    this.addEventsForShape(uploadedLine);
     this.layer.add(uploadedLine);
     this.layer.draw();
   }
@@ -107,7 +138,7 @@ export class AppComponent implements AfterViewInit {
    * Update current hold Line by new coordinates.
    * @param point contains X and Y coordinates
    */
-  public continueLine(point: any) {
+  private continueLine(point: any) {
     console.log('CONTINUE the line');
     this.shape.attrs['points'].push(point.getX(), point.getY());
     this.points.push(point);
@@ -120,7 +151,7 @@ export class AppComponent implements AfterViewInit {
   /**
    * Stop continuing hold Line. Finished Line will be stored in class variable with rest shapes.
    */
-  public stopLine() {
+  private stopLine() {
     console.log('STOP the line');
     this.shape.attrs['stroke'] = 'black';
     this.saveShape(this.shape);
@@ -136,7 +167,7 @@ export class AppComponent implements AfterViewInit {
    * Store finished shape with rest shapes.
    * @param shape shape to store
    */
-  public saveShape(shape: Konva.Line) {
+  private saveShape(shape: Konva.Line) {
     console.log('SAVING shape');
     this.shapes.push(new Shape(uuidv4(), 'line', shape.attrs['points']));
     console.log(this.shapes[this.shapes.length - 1]);
@@ -146,7 +177,7 @@ export class AppComponent implements AfterViewInit {
    * Calculate the place of the new coordinates and define new Line based on predicted values.
    * @param point the current place of mouse on the stage. Contains X and Y coordinates.
    */
-  public calculateLine(point: any) {
+  private calculateLine(point: any) {
     console.log('Calculating line...');
     this.shape.attrs['points'].push(point.getX(), point.getY());
     this.layer.draw();
@@ -157,7 +188,7 @@ export class AppComponent implements AfterViewInit {
   /**
    * Remove all shapes from the layer and reset stored shapes and points on the layer.
    */
-  public clearLayer() {
+  private clearLayer() {
     this.layer.removeChildren();
     this.layer.draw();
     this.shapes = [];
@@ -166,7 +197,7 @@ export class AppComponent implements AfterViewInit {
   // END: shape actions
 
   // START: Helpers
-  public updateCounters() {
+  private updateCounters() {
     this.pointCounter.nativeElement.innerHTML = this.points.length;
     this.shapeCounter.nativeElement.innerHTML = this.shapes.length;
   }
@@ -196,7 +227,7 @@ export class AppComponent implements AfterViewInit {
     };
   }
 
-  public processUpload(data: any) {
+  private processUpload(data: any) {
     this.clearLayer();
 
     var newDatas = JSON.parse(data);
