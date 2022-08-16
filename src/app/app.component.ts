@@ -30,6 +30,15 @@ export class AppComponent implements AfterViewInit {
     this.layer = new Konva.Layer();
     stage.add(this.layer);
     this.updateCounters();
+
+    // assign events to the stage
+    stage.on('mouseup', (e) => {
+      this.clickedPoint(e.evt);
+    });
+
+    stage.on('mousemove', (e) => {
+      this.movedMouse(e.evt);
+    });
   }
 
   // START: Main interaction with layer
@@ -168,9 +177,8 @@ export class AppComponent implements AfterViewInit {
    * @param shape shape to store
    */
   private saveShape(shape: Konva.Line) {
-    console.log('SAVING shape');
     this.shapes.push(new Shape(uuidv4(), 'line', shape.attrs['points']));
-    console.log(this.shapes[this.shapes.length - 1]);
+    console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
   }
 
   /**
@@ -178,7 +186,6 @@ export class AppComponent implements AfterViewInit {
    * @param point the current place of mouse on the stage. Contains X and Y coordinates.
    */
   private calculateLine(point: any) {
-    console.log('Calculating line...');
     this.shape.attrs['points'].push(point.getX(), point.getY());
     this.layer.draw();
     this.shape.attrs['points'].pop();
