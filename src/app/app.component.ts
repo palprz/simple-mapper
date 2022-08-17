@@ -42,6 +42,11 @@ export class AppComponent implements AfterViewInit {
 
     // assign events to the stage
     stage.on('mouseup', (e) => {
+      if (this.isDragAction) {
+        // part of drag action - ignore this click
+        return;
+      }
+
       // TODO fix red line for this scenario: selected shape and select next shape
       if (
         e.target !== undefined &&
@@ -49,7 +54,7 @@ export class AppComponent implements AfterViewInit {
         (!(e.target instanceof Line) || this.lastPoint !== undefined)
       ) {
         this.clickedPoint(e.evt);
-      } else if (!this.isDragAction) {
+      } else {
         this.editLine(e.target);
       }
       this.layer.draw();
@@ -66,11 +71,6 @@ export class AppComponent implements AfterViewInit {
    * @param event contains X and Y coordinates
    */
   public clickedPoint(event: any) {
-    if (this.isDragAction) {
-      // part of drag action - ignore this click
-      return;
-    }
-
     var point = new Point(event.offsetX, event.offsetY);
 
     if (this.shape === undefined) {
@@ -201,7 +201,6 @@ export class AppComponent implements AfterViewInit {
    * @param shape shape to store
    */
   private saveShape(shape: Konva.Line) {
-    console.log('shape.attrs', shape.attrs);
     this.shapes.push(
       new Shape(
         shape.attrs['id'],
@@ -237,7 +236,11 @@ export class AppComponent implements AfterViewInit {
 
   // START: Helpers
   private updateCounters() {
-    // TODO add counter for points
+    var pointsLength = 0;
+    this.shapes.forEach(
+      (el) => (pointsLength = el.getPoints().length + pointsLength)
+    );
+    this.pointCounter.nativeElement.innerHTML = pointsLength / 2;
     this.shapeCounter.nativeElement.innerHTML = this.shapes.length;
   }
   // END: Helpers
