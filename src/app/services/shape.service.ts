@@ -30,8 +30,7 @@ export class ShapeService {
 
   /**
    * Create the shape (based on the basic shape) with provided details.
-   * @param points optional points to include in the new line
-   * @param stroke the colour of the stroke to be added
+   * @param storedData data used to create new line
    * @returns
    */
   public createNewLine(storedData: Shape) {
@@ -48,7 +47,6 @@ export class ShapeService {
       line.attrs['y'] = storedData.offsetY;
     }
 
-    console.log('line:', line);
     return line;
   }
 
