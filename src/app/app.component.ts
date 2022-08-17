@@ -1,9 +1,12 @@
 import { AfterViewInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import Konva from 'konva';
-import { Point } from './point.model';
-import { Shape } from './shape.model';
+import { Point } from './models/point.model';
+import { Shape } from './models/shape.model';
 import { Line } from 'konva/lib/shapes/Line';
+import { PointService } from './services/point.service';
+import { ShapeService } from './services/shape.service';
+import { DataService } from './services/data.service';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +22,12 @@ export class AppComponent implements AfterViewInit {
   private lastPoint: any;
   private layer: Konva.Layer;
   private isDragAction: boolean;
+
+  constructor(
+    public dataService: DataService,
+    public pointService: PointService,
+    public shapeService: ShapeService
+  ) {}
 
   ngAfterViewInit(): void {
     var stage = new Konva.Stage({
@@ -67,26 +76,11 @@ export class AppComponent implements AfterViewInit {
       this.startLine();
     }
 
-    if (this.areSamePoints(this.lastPoint, point)) {
+    if (this.pointService.areSamePoints(this.lastPoint, point)) {
       this.stopLine();
     } else {
       this.continueLine(point);
     }
-  }
-
-  /**
-   * Compare two points to check if they are the same point. The only way to verify is compare coordinates (X and Y).
-   * @param point1 First point
-   * @param point2 Second point
-   * @returns
-   */
-  private areSamePoints(point1: any, point2: Point) {
-    return (
-      point1 &&
-      point2 &&
-      point1.getX() === point2.getX() &&
-      point1.getY() === point2.getY()
-    );
   }
 
   /**
