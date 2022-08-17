@@ -70,15 +70,26 @@ export class AppComponent implements AfterViewInit {
       this.startLine();
     }
 
-    if (
-      this.lastPoint &&
-      this.lastPoint.getX() === point.getX() &&
-      this.lastPoint.getY() === point.getY()
-    ) {
+    if (this.areSamePoints(this.lastPoint, point)) {
       this.stopLine();
     } else {
       this.continueLine(point);
     }
+  }
+
+  /**
+   * Compare two points to check if they are the same point. The only way to verify is compare coordinates (X and Y).
+   * @param point1 First point
+   * @param point2 Second point
+   * @returns
+   */
+  private areSamePoints(point1: any, point2: Point) {
+    return (
+      point1 &&
+      point2 &&
+      point1.getX() === point2.getX() &&
+      point1.getY() === point2.getY()
+    );
   }
 
   /**
@@ -118,12 +129,11 @@ export class AppComponent implements AfterViewInit {
    * Change cursor for the shape after mouse over it.
    * @param shape the shape which will have changed cursor
    */
-  // TODO think how to simplify these events
   private addEventsForShape(shape: any) {
-    shape.on('mouseover', function () {
+    shape.on('mouseover', () => {
       document.body.style.cursor = 'pointer';
     });
-    shape.on('mouseout', function () {
+    shape.on('mouseout', () => {
       document.body.style.cursor = 'default';
     });
 
@@ -136,23 +146,30 @@ export class AppComponent implements AfterViewInit {
   }
 
   /**
-   * TODO docs
-   * @param shape
+   * Edit existing Line on the layer.
+   * @param shape shape to be select as current Line to modify
    */
   private editLine(shape: Line) {
     this.shape = shape;
     this.shape.attrs['stroke'] = 'red';
-    this.lastPoint = new Point(
-      // TODO is this even working? Fix offset calculation
-      // this.shape.attrs['points'][this.shape.attrs['points'].length - 2] +
-      //   this.getOffsetXFromShape(this.shape),
-      // this.shape.attrs['points'][this.shape.attrs['points'].length - 1] +
-      //   this.getOffsetYFromShape(this.shape)
-      this.shape.attrs['points'][this.shape.attrs['points'].length - 2],
-      this.shape.attrs['points'][this.shape.attrs['points'].length - 1]
-    );
+    this.lastPoint = this.getLastPointFromShape(this.shape);
     this.layer.draw();
     // TODO remove existing shape from the array (we are going to add it anyway at the end)
+  }
+
+  /**
+   * Create Point based on the last 2 coordinates from the provided shape.
+   * @param shape contains attributes with coordinates
+   * @returns Points or undefined (if not enough coordinates)
+   */
+  private getLastPointFromShape(shape: any) {
+    var coords = shape.attrs['points'];
+    if (coords.length < 2) {
+      // 0 or 1 coords - not enough to create point
+      return undefined;
+    }
+
+    return new Point(coords[coords.length - 2], coords[coords.length - 1]);
   }
 
   /**
@@ -181,12 +198,7 @@ export class AppComponent implements AfterViewInit {
    */
   private continueLine(point: Point) {
     console.log('CONTINUE the line');
-    // TODO verify if this is correctly working (case when the Line has been dragged)
-    this.shape.attrs['points'].push(
-      point.getX() + this.getOffsetXFromShape(this.shape),
-      point.getY() + this.getOffsetYFromShape(this.shape)
-    );
-    this.points.push(point);
+    this.addPointToShape(this.shape, point);
 
     this.layer.draw();
     this.updateCounters();
@@ -232,10 +244,22 @@ export class AppComponent implements AfterViewInit {
    * @param point the current place of mouse on the stage. Contains X and Y coordinates.
    */
   private calculateLine(point: Point) {
-    this.shape.attrs['points'].push(point.getX(), point.getY());
+    this.addPointToShape(this.shape, point);
     this.layer.draw();
     this.shape.attrs['points'].pop();
     this.shape.attrs['points'].pop();
+  }
+
+  /**
+   * TODO example this in easier way: this is tricky: predict next point based on the actual mouse position, not: position of the shape AND offset. We should remove the offset.
+   * @param shape TODO
+   * @param newPoint TODO
+   */
+  private addPointToShape(shape: any, newPoint: Point) {
+    shape.attrs['points'].push(
+      newPoint.getX() - this.getOffsetXFromShape(shape),
+      newPoint.getY() - this.getOffsetYFromShape(shape)
+    );
   }
 
   /**
@@ -245,13 +269,12 @@ export class AppComponent implements AfterViewInit {
     this.layer.removeChildren();
     this.layer.draw();
     this.shapes = [];
-    this.points = [];
   }
   // END: shape actions
 
   // START: Helpers
   private updateCounters() {
-    this.pointCounter.nativeElement.innerHTML = this.points.length;
+    // TODO add counter for points
     this.shapeCounter.nativeElement.innerHTML = this.shapes.length;
   }
   // END: Helpers
@@ -286,13 +309,6 @@ export class AppComponent implements AfterViewInit {
     var newDatas = JSON.parse(data);
     for (var i = 0; newDatas.length > i; i++) {
       this.uploadLine(newDatas[i]);
-
-      // update array with points
-      for (var j = 0; newDatas[i].points.length > j; j = j + 2) {
-        this.points.push(
-          new Point(newDatas[i].points[j], newDatas[i].points[j + 1])
-        );
-      }
     }
 
     this.shapes = newDatas;
