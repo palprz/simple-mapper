@@ -189,21 +189,11 @@ export class AppComponent implements AfterViewInit {
    */
   private continueLine(point: Point) {
     console.log('CONTINUE the line');
-    this.addPointToShape(this.shape, point);
+    this.shapeService.addPointToShape(this.shape, point);
 
     this.layer.draw();
     this.updateCounters();
     this.lastPoint = point;
-  }
-
-  // TODO can calculation of offset be done better?
-  private getOffsetXFromShape(shape: any) {
-    return shape.attrs['x'] === undefined ? 0 : shape.attrs['x'];
-  }
-
-  // TODO can calculation of offset be done better?
-  private getOffsetYFromShape(shape: any) {
-    return shape.attrs['y'] === undefined ? 0 : shape.attrs['y'];
   }
 
   /**
@@ -244,22 +234,10 @@ export class AppComponent implements AfterViewInit {
    * @param point the current place of mouse on the stage. Contains X and Y coordinates.
    */
   private calculateLine(point: Point) {
-    this.addPointToShape(this.shape, point);
+    this.shapeService.addPointToShape(this.shape, point);
     this.layer.draw();
     this.shape.attrs['points'].pop();
     this.shape.attrs['points'].pop();
-  }
-
-  /**
-   * TODO example this in easier way: this is tricky: predict next point based on the actual mouse position, not: position of the shape AND offset. We should remove the offset.
-   * @param shape TODO
-   * @param newPoint TODO
-   */
-  private addPointToShape(shape: any, newPoint: Point) {
-    shape.attrs['points'].push(
-      newPoint.getX() - this.getOffsetXFromShape(shape),
-      newPoint.getY() - this.getOffsetYFromShape(shape)
-    );
   }
 
   /**
