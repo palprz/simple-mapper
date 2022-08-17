@@ -77,9 +77,9 @@ export class AppComponent implements AfterViewInit {
     }
 
     if (this.pointService.areSamePoints(this.lastPoint, point)) {
-      this.stopLine();
+      this.finishLine();
     } else {
-      this.continueLine(point);
+      this.addPointToLine(point);
     }
   }
 
@@ -143,24 +143,9 @@ export class AppComponent implements AfterViewInit {
   private editLine(shape: Line) {
     this.shape = shape;
     this.shape.attrs['stroke'] = 'red';
-    this.lastPoint = this.getLastPointFromShape(this.shape);
+    this.lastPoint = this.shapeService.getLastPointFromShape(this.shape);
     this.layer.draw();
     // TODO remove existing shape from the array (we are going to add it anyway at the end)
-  }
-
-  /**
-   * Create Point based on the last 2 coordinates from the provided shape.
-   * @param shape contains attributes with coordinates
-   * @returns Points or undefined (if not enough coordinates)
-   */
-  private getLastPointFromShape(shape: any) {
-    var coords = shape.attrs['points'];
-    if (coords.length < 2) {
-      // 0 or 1 coords - not enough to create point
-      return undefined;
-    }
-
-    return new Point(coords[coords.length - 2], coords[coords.length - 1]);
   }
 
   /**
@@ -187,20 +172,19 @@ export class AppComponent implements AfterViewInit {
    * Update current hold Line by new coordinates.
    * @param point contains X and Y coordinates
    */
-  private continueLine(point: Point) {
-    console.log('CONTINUE the line');
+  private addPointToLine(point: Point) {
+    console.log('ADD POINT the line');
     this.shapeService.addPointToShape(this.shape, point);
 
-    this.layer.draw();
     this.updateCounters();
     this.lastPoint = point;
   }
 
   /**
-   * Stop continuing hold Line. Finished Line will be stored in class variable with rest shapes.
+   * Finished currently holded Line. Finished Line will be stored in class variable with rest shapes.
    */
-  private stopLine() {
-    console.log('STOP the line');
+  private finishLine() {
+    console.log('FINISH the line');
     this.shape.attrs['stroke'] = 'black';
     this.saveShape(this.shape);
     this.shape = undefined;
@@ -259,17 +243,8 @@ export class AppComponent implements AfterViewInit {
 
   // START: Download and upload
 
-  // TODO read more about this: JSON.stringify
-  // TODO bit doggy way ot downloading but well...
   public download() {
-    var a = document.createElement('a');
-    a.href = window.URL.createObjectURL(
-      new Blob([JSON.stringify(this.shapes, null, 2)], {
-        type: 'application/json;charset=utf-8',
-      })
-    );
-    a.download = 'simple-mapper-data.json';
-    a.click();
+    this.dataService.download(this.shapes);
   }
 
   public handleUploadedFile(event: any) {

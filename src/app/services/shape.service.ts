@@ -26,4 +26,19 @@ export class ShapeService {
     return shape.attrs['y'] === undefined ? 0 : shape.attrs['y'];
   }
 
+  /**
+   * Create Point based on the last 2 coordinates from the provided shape.
+   * @param shape contains attributes with coordinates
+   * @returns Points or undefined (if not enough coordinates)
+   */
+   public getLastPointFromShape(shape: any) {
+    var coords = shape.attrs['points'];
+    if (coords.length < 2) {
+      // 0 or 1 coords - not enough to create point
+      return undefined;
+    }
+
+    return new Point(coords[coords.length - 2], coords[coords.length - 1]);
+  }
+
 }
