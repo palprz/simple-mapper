@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Konva from 'konva';
 import { Point } from './point.model';
 import { Shape } from './shape.model';
+import { Line } from 'konva/lib/shapes/Line';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,9 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('shapeCounter') shapeCounter: ElementRef;
 
   private shape: any;
+  // TODO extend Shape to keep offsets for X and Y
   private shapes: Shape[] = [];
+  // TODO is there a point to have it even? maybe just remove this field?
   private points: Point[] = [];
   private lastPoint: any;
   private layer: Konva.Layer;
@@ -33,7 +36,16 @@ export class AppComponent implements AfterViewInit {
 
     // assign events to the stage
     stage.on('mouseup', (e) => {
-      this.clickedPoint(e.evt);
+      // TODO fix red line for this scenario: selected shape and select next shape
+      if (
+        e.target !== undefined &&
+        // cannot be Line OR it can be a Line but still continued (like we would like to finish shape)
+        (!(e.target instanceof Line) || this.lastPoint !== undefined)
+      ) {
+        this.clickedPoint(e.evt);
+      } else if (!this.isDragAction) {
+        this.editLine(e.target);
+      }
     });
 
     stage.on('mousemove', (e) => {
@@ -124,6 +136,26 @@ export class AppComponent implements AfterViewInit {
   }
 
   /**
+   * TODO docs
+   * @param shape
+   */
+  private editLine(shape: Line) {
+    this.shape = shape;
+    this.shape.attrs['stroke'] = 'red';
+    this.lastPoint = new Point(
+      // TODO is this even working? Fix offset calculation
+      // this.shape.attrs['points'][this.shape.attrs['points'].length - 2] +
+      //   this.getOffsetXFromShape(this.shape),
+      // this.shape.attrs['points'][this.shape.attrs['points'].length - 1] +
+      //   this.getOffsetYFromShape(this.shape)
+      this.shape.attrs['points'][this.shape.attrs['points'].length - 2],
+      this.shape.attrs['points'][this.shape.attrs['points'].length - 1]
+    );
+    this.layer.draw();
+    // TODO remove existing shape from the array (we are going to add it anyway at the end)
+  }
+
+  /**
    * Add new Line based on provided input.
    * @param newLine contains points to define new Line.
    */
@@ -147,14 +179,28 @@ export class AppComponent implements AfterViewInit {
    * Update current hold Line by new coordinates.
    * @param point contains X and Y coordinates
    */
-  private continueLine(point: any) {
+  private continueLine(point: Point) {
     console.log('CONTINUE the line');
-    this.shape.attrs['points'].push(point.getX(), point.getY());
+    // TODO verify if this is correctly working (case when the Line has been dragged)
+    this.shape.attrs['points'].push(
+      point.getX() + this.getOffsetXFromShape(this.shape),
+      point.getY() + this.getOffsetYFromShape(this.shape)
+    );
     this.points.push(point);
 
     this.layer.draw();
     this.updateCounters();
     this.lastPoint = point;
+  }
+
+  // TODO can calculation of offset be done better?
+  private getOffsetXFromShape(shape: any) {
+    return shape.attrs['x'] === undefined ? 0 : shape.attrs['x'];
+  }
+
+  // TODO can calculation of offset be done better?
+  private getOffsetYFromShape(shape: any) {
+    return shape.attrs['y'] === undefined ? 0 : shape.attrs['y'];
   }
 
   /**
@@ -185,7 +231,7 @@ export class AppComponent implements AfterViewInit {
    * Calculate the place of the new coordinates and define new Line based on predicted values.
    * @param point the current place of mouse on the stage. Contains X and Y coordinates.
    */
-  private calculateLine(point: any) {
+  private calculateLine(point: Point) {
     this.shape.attrs['points'].push(point.getX(), point.getY());
     this.layer.draw();
     this.shape.attrs['points'].pop();

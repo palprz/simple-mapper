@@ -2,6 +2,7 @@ export class Shape {
   uuid: string;
   type: string;
   points: number[];
+  // TODO offset x, offset y
 
   constructor(uuid: string, type: string, points: number[]) {
     this.uuid = uuid;
