@@ -20,7 +20,6 @@ export class AppComponent implements AfterViewInit {
   private shapes: Shape[] = [];
   private lastPoint: any;
   private layer: Konva.Layer;
-  private isDragAction: boolean;
 
   constructor(
     public dataService: DataService,
@@ -41,13 +40,13 @@ export class AppComponent implements AfterViewInit {
 
     // assign events to the stage
     stage.on('mouseup', (e) => {
-      if (this.isDragAction) {
+      if (this.shapeService.isDragAction) {
         // part of drag action - ignore this click
         return;
       }
 
       if (e.target instanceof Line && this.lastPoint === undefined) {
-        this.editLine(e.target);
+        this.startEditingLine(e.target);
       } else {
         if (this.shape === undefined) {
           // start the new shape
@@ -77,42 +76,20 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  // START: shape actions
   /**
    * Start the Line and hold it as a class variable.
    */
   private startLine() {
     console.log('START the line');
-    this.shape = this.shapeService.getNewLine();
-    this.addEventsForShape(this.shape);
+    this.shape = this.shapeService.createBasicNewLine();
     this.layer.add(this.shape);
-  }
-
-  /**
-   * Change cursor for the shape after mouse over it.
-   * @param shape the shape which will have changed cursor
-   */
-  private addEventsForShape(shape: any) {
-    shape.on('mouseover', () => {
-      document.body.style.cursor = 'pointer';
-    });
-    shape.on('mouseout', () => {
-      document.body.style.cursor = 'default';
-    });
-
-    shape.on('dragstart', () => {
-      this.isDragAction = true;
-    });
-    shape.on('dragend', () => {
-      this.isDragAction = false;
-    });
   }
 
   /**
    * Edit existing Line on the layer.
    * @param shape shape to be select as current Line to modify
    */
-  private editLine(shape: Line) {
+  private startEditingLine(shape: Line) {
     this.shape = shape;
     this.shape.attrs['stroke'] = 'red';
     this.lastPoint = this.shapeService.getLastPointFromShape(this.shape);
@@ -129,16 +106,7 @@ export class AppComponent implements AfterViewInit {
    */
   private uploadLine(newLine: any) {
     console.log('UPLOAD the line');
-    var uploadedLine = new Konva.Line({
-      points: [...newLine.points],
-      stroke: 'black',
-      strokeWidth: 5,
-      lineCap: 'round',
-      lineJoin: 'round',
-      draggable: true,
-    });
-
-    this.addEventsForShape(uploadedLine);
+    var uploadedLine = this.shapeService.createNewLine(newLine);
     this.layer.add(uploadedLine);
   }
 
@@ -206,11 +174,12 @@ export class AppComponent implements AfterViewInit {
 
   // START: Helpers
   private updateCounters() {
-    var pointsLength = 0;
-    this.shapes.forEach(
-      (el) => (pointsLength = el.getPoints().length + pointsLength)
-    );
-    this.pointCounter.nativeElement.innerHTML = pointsLength / 2;
+    // TODO I've broke it once again
+    // var pointsLength = 0;
+    // this.shapes.forEach(
+    //   (el) => (pointsLength = el.getPoints().length + pointsLength)
+    // );
+    // this.pointCounter.nativeElement.innerHTML = pointsLength / 2;
     this.shapeCounter.nativeElement.innerHTML = this.shapes.length;
   }
   // END: Helpers
@@ -222,6 +191,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   public handleUploadedFile(event: any) {
+    // TODO verify if someone didn't click 'Cancel' during upload - it will throw an error currently
     var file = event.target.files[0];
     const fileReader = new FileReader();
     fileReader.readAsText(file, 'UTF-8');

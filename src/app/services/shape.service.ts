@@ -3,15 +3,18 @@ import Konva from 'konva';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Point } from '../models/point.model';
+import { Shape } from '../models/shape.model';
 
 @Injectable({ providedIn: 'root' })
 export class ShapeService {
+  public isDragAction: boolean;
+
   /**
    * Create the basic shape.
    * @returns
    */
-  public getNewLine() {
-    return new Konva.Line({
+  public createBasicNewLine() {
+    var line = new Konva.Line({
       id: uuidv4(),
       points: [],
       stroke: 'red',
@@ -20,28 +23,49 @@ export class ShapeService {
       lineJoin: 'round',
       draggable: true,
     });
+
+    this.addEventsForShape(line);
+    return line;
   }
 
   /**
-   * TODO example this in easier way: this is tricky: predict next point based on the actual mouse position, not: position of the shape AND offset. We should remove the offset.
-   * @param shape TODO
-   * @param newPoint TODO
+   * Create the shape (based on the basic shape) with provided details.
+   * @param points optional points to include in the new line
+   * @param stroke the colour of the stroke to be added
+   * @returns
+   */
+  public createNewLine(storedData: Shape) {
+    var line = this.createBasicNewLine();
+    line.attrs['points'] = [...storedData.points];
+    line.attrs['stroke'] = 'black';
+
+    // TODO for some reason it doesn't like calling getOffsetX()?
+    if (storedData.offsetX !== 0) {
+      line.attrs['x'] = storedData.offsetX;
+    }
+
+    if (storedData.offsetY !== 0) {
+      line.attrs['y'] = storedData.offsetY;
+    }
+
+    console.log('line:', line);
+    return line;
+  }
+
+  /**
+   * Add new point to the shape. We should calculate coordinates of the new point WITHOUT offset to make sure the offset from the shape will not be doubled.
+   * @param shape contains coordinates which should be removed from the new point
+   * @param newPoint the new point to be added
    */
   public addPointToShape(shape: any, newPoint: Point) {
     shape.attrs['points'].push(
-      newPoint.getX() - this.getOffsetXFromShape(shape),
-      newPoint.getY() - this.getOffsetYFromShape(shape)
+      newPoint.getX() - this.getOffset(shape, 'x'),
+      newPoint.getY() - this.getOffset(shape, 'y')
     );
   }
 
-  // TODO can calculation of offset be done better?
-  private getOffsetXFromShape(shape: any) {
-    return shape.attrs['x'] === undefined ? 0 : shape.attrs['x'];
-  }
-
-  // TODO can calculation of offset be done better?
-  private getOffsetYFromShape(shape: any) {
-    return shape.attrs['y'] === undefined ? 0 : shape.attrs['y'];
+  private getOffset(shape: any, coord: string) {
+    return shape.attrs[coord] === undefined ? 0 : shape.attrs[coord];
   }
 
   /**
@@ -57,5 +81,25 @@ export class ShapeService {
     }
 
     return new Point(coords[coords.length - 2], coords[coords.length - 1]);
+  }
+
+  /**
+   * Change cursor for the shape after mouse over it.
+   * @param shape the shape which will have changed cursor
+   */
+  public addEventsForShape(shape: any) {
+    shape.on('mouseover', () => {
+      document.body.style.cursor = 'pointer';
+    });
+    shape.on('mouseout', () => {
+      document.body.style.cursor = 'default';
+    });
+
+    shape.on('dragstart', () => {
+      this.isDragAction = true;
+    });
+    shape.on('dragend', () => {
+      this.isDragAction = false;
+    });
   }
 }
