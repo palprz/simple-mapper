@@ -15,10 +15,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('shapeCounter') shapeCounter: ElementRef;
 
   private shape: any;
-  // TODO extend Shape to keep offsets for X and Y
   private shapes: Shape[] = [];
-  // TODO is there a point to have it even? maybe just remove this field?
-  private points: Point[] = [];
   private lastPoint: any;
   private layer: Konva.Layer;
   private isDragAction: boolean;
@@ -235,7 +232,16 @@ export class AppComponent implements AfterViewInit {
    * @param shape shape to store
    */
   private saveShape(shape: Konva.Line) {
-    this.shapes.push(new Shape(uuidv4(), 'line', shape.attrs['points']));
+    console.log('shape.attrs', shape.attrs);
+    this.shapes.push(
+      new Shape(
+        uuidv4(),
+        'line',
+        shape.attrs['points'],
+        shape.attrs['x'],
+        shape.attrs['y']
+      )
+    );
     console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
   }
 
