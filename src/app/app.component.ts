@@ -1,5 +1,4 @@
 import { AfterViewInit, ElementRef, Component, ViewChild } from '@angular/core';
-import { v4 as uuidv4 } from 'uuid';
 import Konva from 'konva';
 import { Point } from './models/point.model';
 import { Shape } from './models/shape.model';
@@ -69,23 +68,14 @@ export class AppComponent implements AfterViewInit {
     });
 
     stage.on('mousemove', (e) => {
-      this.movedMouse(e.evt);
+      if (this.lastPoint === undefined) {
+        // last point not defined so cannot draw a line
+        return;
+      }
+
+      this.calculateLine(new Point(e.evt.offsetX, e.evt.offsetY));
     });
   }
-
-  /**
-   * Handle move of the mouse to predict next point on the layer.
-   * @param event contains X and Y coordinates
-   */
-  public movedMouse(event: any) {
-    if (this.lastPoint === undefined) {
-      // last point not defined so cannot draw a line
-      return;
-    }
-
-    this.calculateLine(new Point(event.offsetX, event.offsetY));
-  }
-  // END: Main interaction with canvas
 
   // START: shape actions
   /**
@@ -93,16 +83,7 @@ export class AppComponent implements AfterViewInit {
    */
   private startLine() {
     console.log('START the line');
-    this.shape = new Konva.Line({
-      id: uuidv4(),
-      points: [],
-      stroke: 'red',
-      strokeWidth: 5,
-      lineCap: 'round',
-      lineJoin: 'round',
-      draggable: true,
-    });
-
+    this.shape = this.shapeService.getNewLine();
     this.addEventsForShape(this.shape);
     this.layer.add(this.shape);
   }
