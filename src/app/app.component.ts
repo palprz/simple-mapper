@@ -47,41 +47,30 @@ export class AppComponent implements AfterViewInit {
         return;
       }
 
-      // TODO fix red line for this scenario: selected shape and select next shape
-      if (
-        e.target !== undefined &&
-        // cannot be Line OR it can be a Line but still continued (like we would like to finish shape)
-        (!(e.target instanceof Line) || this.lastPoint !== undefined)
-      ) {
-        this.clickedPoint(e.evt);
-      } else {
+      if (e.target instanceof Line && this.lastPoint === undefined) {
         this.editLine(e.target);
+      } else {
+        if (this.shape === undefined) {
+          // start the new shape
+          this.startLine();
+        }
+
+        var point = new Point(e.evt.offsetX, e.evt.offsetY);
+        if (this.pointService.areSamePoints(this.lastPoint, point)) {
+          // clicked same point - finish shape
+          this.finishLine();
+        } else {
+          // extend the shape by the new point
+          this.addPointToLine(point);
+        }
       }
+
       this.layer.draw();
     });
 
     stage.on('mousemove', (e) => {
       this.movedMouse(e.evt);
     });
-  }
-
-  // START: Main interaction with layer
-  /**
-   * Handle click on the layer to create a point.
-   * @param event contains X and Y coordinates
-   */
-  public clickedPoint(event: any) {
-    var point = new Point(event.offsetX, event.offsetY);
-
-    if (this.shape === undefined) {
-      this.startLine();
-    }
-
-    if (this.pointService.areSamePoints(this.lastPoint, point)) {
-      this.finishLine();
-    } else {
-      this.addPointToLine(point);
-    }
   }
 
   /**
