@@ -52,6 +52,7 @@ export class AppComponent implements AfterViewInit {
       } else if (!this.isDragAction) {
         this.editLine(e.target);
       }
+      this.layer.draw();
     });
 
     stage.on('mousemove', (e) => {
@@ -104,6 +105,7 @@ export class AppComponent implements AfterViewInit {
   private startLine() {
     console.log('START the line');
     this.shape = new Konva.Line({
+      id: uuidv4(),
       points: [],
       stroke: 'red',
       strokeWidth: 5,
@@ -144,8 +146,11 @@ export class AppComponent implements AfterViewInit {
     this.shape = shape;
     this.shape.attrs['stroke'] = 'red';
     this.lastPoint = this.shapeService.getLastPointFromShape(this.shape);
-    this.layer.draw();
-    // TODO remove existing shape from the array (we are going to add it anyway at the end)
+    this.shapes = this.shapes.filter((el) => {
+      // remove existing shape from the stored list
+      return el.getID() !== shape.attrs['id'];
+    });
+    this.updateCounters();
   }
 
   /**
@@ -165,7 +170,6 @@ export class AppComponent implements AfterViewInit {
 
     this.addEventsForShape(uploadedLine);
     this.layer.add(uploadedLine);
-    this.layer.draw();
   }
 
   /**
@@ -189,9 +193,6 @@ export class AppComponent implements AfterViewInit {
     this.saveShape(this.shape);
     this.shape = undefined;
     this.lastPoint = undefined;
-
-    //update the canvas
-    this.layer.draw();
     this.updateCounters();
   }
 
@@ -203,7 +204,7 @@ export class AppComponent implements AfterViewInit {
     console.log('shape.attrs', shape.attrs);
     this.shapes.push(
       new Shape(
-        uuidv4(),
+        shape.attrs['id'],
         'line',
         shape.attrs['points'],
         shape.attrs['x'],
@@ -265,6 +266,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     this.shapes = newDatas;
+    this.layer.draw();
     this.updateCounters();
   }
   // END: Download and upload
