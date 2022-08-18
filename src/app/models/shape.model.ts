@@ -1,7 +1,6 @@
 export class Shape {
   private _id: string;
   private _type: string;
-  // TODO probably it will be good to store it all as just 'attrs' but without a couple default values
   private _points: number[];
   private _offsetX: number;
   private _offsetY: number;

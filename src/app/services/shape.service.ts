@@ -78,7 +78,6 @@ export class ShapeService {
     line.attrs['points'] = [...storedData.points];
     line.attrs['stroke'] = 'black';
 
-    // TODO for some reason it doesn't like calling getOffsetX()?
     if (storedData.offsetX !== 0) {
       line.attrs['x'] = storedData.offsetX;
     }
@@ -173,7 +172,10 @@ export class ShapeService {
     return new Point(coords[coords.length - 2], coords[coords.length - 1]);
   }
 
-  // TODO docs
+  /**
+   * Calculate number of points on the layer based on the shapes.
+   * @returns
+   */
   public getPointsNumber() {
     var pointsLength = 0;
     this.shapes.forEach(
@@ -182,7 +184,10 @@ export class ShapeService {
     return pointsLength / 2;
   }
 
-  // TODO docs
+  /**
+   * Return number of shapes.
+   * @returns
+   */
   public getShapeNumber() {
     return this.shapes.length;
   }
@@ -207,7 +212,10 @@ export class ShapeService {
     });
   }
 
-  // TODO docs
+  /**
+   * Handle provided data and add them to the layer.
+   * @param data datat to process
+   */
   public processUpload(data: any) {
     this.layerService.clear();
 
@@ -220,7 +228,6 @@ export class ShapeService {
     this.layerService.draw();
   }
 
-  //TODO maybe it will be not used outside shapeService?
   get shape() {
     return this._shape;
   }
@@ -229,7 +236,6 @@ export class ShapeService {
     this._shape = shape;
   }
 
-  //TODO maybe it will be not used outside shapeService?
   get shapes() {
     return this._shapes;
   }

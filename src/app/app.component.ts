@@ -90,14 +90,15 @@ export class AppComponent implements AfterViewInit {
       this.shapeService.getShapeNumber();
   }
 
-  // START: Download and upload
-
   public download() {
-    this.dataService.download(this.shapeService.shapes);
+    this.dataService.download();
   }
 
   public handleUploadedFile(event: any) {
-    // TODO verify if someone didn't click 'Cancel' during upload - it will throw an error currently
+    if (event.target.files.length == 0) {
+      // no file to upload - ignore event
+      return;
+    }
     var file = event.target.files[0];
     const fileReader = new FileReader();
     fileReader.readAsText(file, 'UTF-8');
@@ -106,6 +107,4 @@ export class AppComponent implements AfterViewInit {
       this.updateCounters();
     };
   }
-
-  // END: Download and upload
 }
