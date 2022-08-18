@@ -1,6 +1,5 @@
 import { AfterViewInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { Point } from './models/point.model';
-import { Shape } from './models/shape.model';
 import { Line } from 'konva/lib/shapes/Line';
 import { PointService } from './services/point.service';
 import { ShapeService } from './services/shape.service';
@@ -15,9 +14,6 @@ import { LayerService } from './services/layer.service';
 export class AppComponent implements AfterViewInit {
   @ViewChild('pointCounter') pointCounter: ElementRef;
   @ViewChild('shapeCounter') shapeCounter: ElementRef;
-
-  private shape: any;
-  private shapes: Shape[] = [];
 
   constructor(
     public dataService: DataService,
