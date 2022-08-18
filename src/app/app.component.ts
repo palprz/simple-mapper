@@ -6,6 +6,7 @@ import { Line } from 'konva/lib/shapes/Line';
 import { PointService } from './services/point.service';
 import { ShapeService } from './services/shape.service';
 import { DataService } from './services/data.service';
+import { LayerService } from './services/layer.service';
 
 @Component({
   selector: 'app-root',
@@ -19,23 +20,17 @@ export class AppComponent implements AfterViewInit {
   private shape: any;
   private shapes: Shape[] = [];
   private lastPoint: any;
-  private layer: Konva.Layer;
 
   constructor(
     public dataService: DataService,
+    public layerService: LayerService,
     public pointService: PointService,
     public shapeService: ShapeService
   ) {}
 
   ngAfterViewInit(): void {
-    var stage = new Konva.Stage({
-      container: 'canvas-container',
-      width: 800,
-      height: 400,
-    });
+    var stage = this.layerService.initStage();
 
-    this.layer = new Konva.Layer();
-    stage.add(this.layer);
     this.updateCounters();
 
     // assign events to the stage
@@ -63,7 +58,7 @@ export class AppComponent implements AfterViewInit {
         }
       }
 
-      this.layer.draw();
+      this.layerService.draw();
     });
 
     stage.on('mousemove', (e) => {
@@ -82,7 +77,7 @@ export class AppComponent implements AfterViewInit {
   private startLine() {
     console.log('START the line');
     this.shape = this.shapeService.createBasicNewLine();
-    this.layer.add(this.shape);
+    this.layerService.addShape(this.shape);
   }
 
   /**
@@ -107,7 +102,7 @@ export class AppComponent implements AfterViewInit {
   private uploadLine(newLine: any) {
     console.log('UPLOAD the line');
     var uploadedLine = this.shapeService.createNewLine(newLine);
-    this.layer.add(uploadedLine);
+    this.layerService.addShape(uploadedLine);
   }
 
   /**
@@ -157,19 +152,11 @@ export class AppComponent implements AfterViewInit {
    */
   private calculateLine(point: Point) {
     this.shapeService.addPointToShape(this.shape, point);
-    this.layer.draw();
+    this.layerService.draw();
     this.shape.attrs['points'].pop();
     this.shape.attrs['points'].pop();
   }
 
-  /**
-   * Remove all shapes from the layer and reset stored shapes and points on the layer.
-   */
-  private clearLayer() {
-    this.layer.removeChildren();
-    this.layer.draw();
-    this.shapes = [];
-  }
   // END: shape actions
 
   // START: Helpers
@@ -201,7 +188,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private processUpload(data: any) {
-    this.clearLayer();
+    this.layerService.clear();
 
     var newDatas = JSON.parse(data);
     for (var i = 0; newDatas.length > i; i++) {
@@ -209,7 +196,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     this.shapes = newDatas;
-    this.layer.draw();
+    this.layerService.draw();
     this.updateCounters();
   }
   // END: Download and upload
