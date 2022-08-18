@@ -1,10 +1,10 @@
 export class Shape {
-  id: string;
-  type: string;
+  private _id: string;
+  private _type: string;
   // TODO probably it will be good to store it all as just 'attrs' but without a couple default values
-  points: number[];
-  offsetX: number;
-  offsetY: number;
+  private _points: number[];
+  private _offsetX: number;
+  private _offsetY: number;
 
   constructor(
     id: string,
@@ -13,30 +13,30 @@ export class Shape {
     offsetX: number,
     offsetY: number
   ) {
-    this.id = id;
-    this.type = type;
-    this.points = points;
-    this.offsetX = offsetX ? offsetX : 0;
-    this.offsetY = offsetY ? offsetY : 0;
+    this._id = id;
+    this._type = type;
+    this._points = points;
+    this._offsetX = offsetX ? offsetX : 0;
+    this._offsetY = offsetY ? offsetY : 0;
   }
 
-  public getID(): string {
-    return this.id;
+  get id(): string {
+    return this._id;
   }
 
-  public getType(): string {
-    return this.type;
+  get type(): string {
+    return this._type;
   }
 
-  public getPoints(): number[] {
-    return this.points;
+  get points(): number[] {
+    return this._points;
   }
 
-  public getOffsetX(): number {
-    return this.offsetX;
+  get offsetX(): number {
+    return this._offsetX;
   }
 
-  public getOffsetY(): number {
-    return this.offsetY;
+  get offsetY(): number {
+    return this._offsetY;
   }
 }

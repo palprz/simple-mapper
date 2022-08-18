@@ -3,7 +3,7 @@ import Konva from 'konva';
 
 @Injectable({ providedIn: 'root' })
 export class LayerService {
-  private layer: Konva.Layer;
+  private _layer: Konva.Layer;
 
   /**
    * Create the stage and save the created layer to the class field.
@@ -16,7 +16,7 @@ export class LayerService {
       height: 400,
     });
 
-    this.layer = new Konva.Layer();
+    this._layer = new Konva.Layer();
     stage.add(this.layer);
 
     return stage;
@@ -26,8 +26,8 @@ export class LayerService {
    * Get the current layer of the stage.
    * @returns layer
    */
-  public getLayer() {
-    return this.layer;
+  get layer() {
+    return this._layer;
   }
 
   /**

@@ -10,9 +10,9 @@ import { PointService } from './point.service';
 
 @Injectable({ providedIn: 'root' })
 export class ShapeService {
-  public isDragAction: boolean;
-  private shape: any;
-  private shapes: Shape[] = [];
+  private _isDragAction: boolean;
+  private _shape: any;
+  private _shapes: Shape[] = [];
 
   constructor(
     public layerService: LayerService,
@@ -95,7 +95,7 @@ export class ShapeService {
    * @param shape shape to store
    */
   public saveShape(shape: Konva.Line) {
-    this.getShapes().push(
+    this.shapes.push(
       new Shape(
         shape.attrs['id'],
         'line',
@@ -104,28 +104,28 @@ export class ShapeService {
         shape.attrs['y']
       )
     );
-    console.log('SAVING shape', this.getShapes()[this.getShapes().length - 1]);
+    console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
   }
 
   /**
    * Update current hold Line by new coordinates.
    * @param point contains X and Y coordinates
    */
-   public addPointToLine(point: Point) {
+  public addPointToLine(point: Point) {
     console.log('ADD POINT the line');
     this.addPointToShape(this.shape, point);
-    this.pointService.setLastPoint(point);
+    this.pointService.lastPoint = point;
   }
 
   /**
    * Finished currently holded Line. Finished Line will be stored in class variable with rest shapes.
    */
-   public finishLine() {
+  public finishLine() {
     console.log('FINISH the line');
-    this.getShape().attrs['stroke'] = 'black';
+    this.shape.attrs['stroke'] = 'black';
     this.saveShape(this.shape);
     this.shape = undefined;
-    this.pointService.setLastPoint(undefined);
+    this.pointService.lastPoint = undefined;
   }
 
   /**
@@ -135,10 +135,10 @@ export class ShapeService {
   public startEditingLine(shape: Line) {
     shape.attrs['stroke'] = 'red';
     this.shape = shape;
-    this.pointService.setLastPoint(this.getLastPointFromShape(this.shape));
-    this.shapes = this.getShapes().filter((el) => {
+    this.pointService.lastPoint = this.getLastPointFromShape(this.shape);
+    this.shapes = this.shapes.filter((el) => {
       // remove existing shape from the stored list
-      return el.getID() !== shape.attrs['id'];
+      return el.id !== shape.attrs['id'];
     });
   }
 
@@ -149,8 +149,8 @@ export class ShapeService {
    */
   private addPointToShape(shape: any, newPoint: Point) {
     shape.attrs['points'].push(
-      newPoint.getX() - this.getOffset(shape, 'x'),
-      newPoint.getY() - this.getOffset(shape, 'y')
+      newPoint.x - this.getOffset(shape, 'x'),
+      newPoint.y - this.getOffset(shape, 'y')
     );
   }
 
@@ -176,15 +176,15 @@ export class ShapeService {
   // TODO docs
   public getPointsNumber() {
     var pointsLength = 0;
-    this.getShapes().forEach(
-      (el) => (pointsLength = el.getPoints().length + pointsLength)
+    this.shapes.forEach(
+      (el) => (pointsLength = el.points.length + pointsLength)
     );
     return pointsLength / 2;
   }
 
   // TODO docs
   public getShapeNumber() {
-    return this.getShapes().length;
+    return this.shapes.length;
   }
 
   /**
@@ -206,7 +206,6 @@ export class ShapeService {
       this.isDragAction = false;
     });
   }
-  
 
   // TODO docs
   public processUpload(data: any) {
@@ -222,12 +221,28 @@ export class ShapeService {
   }
 
   //TODO maybe it will be not used outside shapeService?
-  public getShape() {
-    return this.shape;
+  get shape() {
+    return this._shape;
+  }
+
+  set shape(shape: any) {
+    this._shape = shape;
   }
 
   //TODO maybe it will be not used outside shapeService?
-  public getShapes() {
-    return this.shapes;
+  get shapes() {
+    return this._shapes;
+  }
+
+  set shapes(shapes: Shape[]) {
+    this._shape = shapes;
+  }
+
+  get isDragAction(): boolean {
+    return this._isDragAction;
+  }
+
+  set isDragAction(isDragAction: boolean) {
+    this._isDragAction = isDragAction;
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class PointService {
-  private lastPoint: any;
+  private _lastPoint: any;
 
   /**
    * Compare the point with last point to check if they are the same. The only way to verify is compare coordinates (X and Y).
@@ -11,18 +11,18 @@ export class PointService {
    */
   public isSamePointAsLastPoint(point: any) {
     return (
-      this.getLastPoint() &&
+      this.lastPoint &&
       point &&
-      this.getLastPoint().getX() === point.getX() &&
-      this.getLastPoint().getY() === point.getY()
+      this.lastPoint.x === point.x &&
+      this.lastPoint.y === point.y
     );
   }
 
-  public getLastPoint() {
-    return this.lastPoint;
+  get lastPoint() {
+    return this._lastPoint;
   }
 
-  public setLastPoint(lastPoint: any) {
-    this.lastPoint = lastPoint;
+  set lastPoint(lastPoint: any) {
+    this._lastPoint = lastPoint;
   }
 }

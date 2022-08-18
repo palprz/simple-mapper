@@ -40,21 +40,21 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  // TODO docs
+  /**
+   * Handle all 'mouseup' events.
+   * @param e event
+   */
   private handleMouseUpEvent(e: any) {
     if (this.shapeService.isDragAction) {
       // part of drag action - ignore this click
       return;
     }
 
-    if (
-      e.target instanceof Line &&
-      this.pointService.getLastPoint() === undefined
-    ) {
+    if (e.target instanceof Line && this.pointService.lastPoint === undefined) {
       this.shapeService.startEditingLine(e.target);
       this.updateCounters();
     } else {
-      if (this.shapeService.getShape() === undefined) {
+      if (this.shapeService.shape === undefined) {
         // start the new shape
         this.shapeService.startLine();
       }
@@ -74,9 +74,12 @@ export class AppComponent implements AfterViewInit {
     this.layerService.draw();
   }
 
-  // TODO docs
+  /**
+   * Handle all 'mousemove' events.
+   * @param e event
+   */
   private handleMouseMoveEvent(e: any) {
-    if (this.pointService.getLastPoint() === undefined) {
+    if (this.pointService.lastPoint === undefined) {
       // last point not defined so cannot draw a line
       return;
     }
@@ -94,7 +97,7 @@ export class AppComponent implements AfterViewInit {
   // START: Download and upload
 
   public download() {
-    this.dataService.download(this.shapeService.getShapes());
+    this.dataService.download(this.shapeService.shapes);
   }
 
   public handleUploadedFile(event: any) {
