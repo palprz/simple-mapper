@@ -1,19 +1,55 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
+import { shapes } from 'konva/lib/Shape';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Point } from '../models/point.model';
 import { Shape } from '../models/shape.model';
+import { LayerService } from './layer.service';
 
 @Injectable({ providedIn: 'root' })
 export class ShapeService {
   public isDragAction: boolean;
 
+  constructor(public layerService: LayerService) {}
+
+  /**
+   * Start the Line and hold it as a class variable.
+   * @returns 
+   */
+   public startLine() {
+    console.log('Start the line');
+    var shape = this.createBasicNewLine();
+    this.layerService.addShape(shape);
+    return shape;
+  }
+
+  /**
+   * Add new Line based on provided input.
+   * @param newLine contains points to define new Line.
+   */
+   public uploadLine(newLine: any) {
+    console.log('UPLOAD the line');
+    var uploadedLine = this.createNewLine(newLine);
+    this.layerService.addShape(uploadedLine);
+  }
+
+  /**
+   * Calculate the place of the new coordinates and define new Line based on predicted values.
+   * @param point the current place of mouse on the stage. Contains X and Y coordinates.
+   */
+   public calculateLine(shape: any, point: Point) {
+    this.addPointToShape(shape, point);
+    this.layerService.draw();
+    shape.attrs['points'].pop();
+    shape.attrs['points'].pop();
+  }
+
   /**
    * Create the basic shape.
    * @returns
    */
-  public createBasicNewLine() {
+  private createBasicNewLine() {
     var line = new Konva.Line({
       id: uuidv4(),
       points: [],

@@ -45,7 +45,7 @@ export class AppComponent implements AfterViewInit {
       } else {
         if (this.shape === undefined) {
           // start the new shape
-          this.startLine();
+          this.shape = this.shapeService.startLine();
         }
 
         var point = new Point(e.evt.offsetX, e.evt.offsetY);
@@ -67,17 +67,8 @@ export class AppComponent implements AfterViewInit {
         return;
       }
 
-      this.calculateLine(new Point(e.evt.offsetX, e.evt.offsetY));
+      this.shapeService.calculateLine(this.shape, new Point(e.evt.offsetX, e.evt.offsetY));
     });
-  }
-
-  /**
-   * Start the Line and hold it as a class variable.
-   */
-  private startLine() {
-    console.log('START the line');
-    this.shape = this.shapeService.createBasicNewLine();
-    this.layerService.addShape(this.shape);
   }
 
   /**
@@ -93,16 +84,6 @@ export class AppComponent implements AfterViewInit {
       return el.getID() !== shape.attrs['id'];
     });
     this.updateCounters();
-  }
-
-  /**
-   * Add new Line based on provided input.
-   * @param newLine contains points to define new Line.
-   */
-  private uploadLine(newLine: any) {
-    console.log('UPLOAD the line');
-    var uploadedLine = this.shapeService.createNewLine(newLine);
-    this.layerService.addShape(uploadedLine);
   }
 
   /**
@@ -146,17 +127,6 @@ export class AppComponent implements AfterViewInit {
     console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
   }
 
-  /**
-   * Calculate the place of the new coordinates and define new Line based on predicted values.
-   * @param point the current place of mouse on the stage. Contains X and Y coordinates.
-   */
-  private calculateLine(point: Point) {
-    this.shapeService.addPointToShape(this.shape, point);
-    this.layerService.draw();
-    this.shape.attrs['points'].pop();
-    this.shape.attrs['points'].pop();
-  }
-
   // END: shape actions
 
   // START: Helpers
@@ -192,7 +162,7 @@ export class AppComponent implements AfterViewInit {
 
     var newDatas = JSON.parse(data);
     for (var i = 0; newDatas.length > i; i++) {
-      this.uploadLine(newDatas[i]);
+      this.shapeService.uploadLine(newDatas[i]);
     }
 
     this.shapes = newDatas;
