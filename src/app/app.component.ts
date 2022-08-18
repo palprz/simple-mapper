@@ -1,5 +1,4 @@
 import { AfterViewInit, ElementRef, Component, ViewChild } from '@angular/core';
-import Konva from 'konva';
 import { Point } from './models/point.model';
 import { Shape } from './models/shape.model';
 import { Line } from 'konva/lib/shapes/Line';
@@ -29,58 +28,68 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     var stage = this.layerService.initStage();
-
     this.updateCounters();
 
     // assign events to the stage
     stage.on('mouseup', (e) => {
-      if (this.shapeService.isDragAction) {
-        // part of drag action - ignore this click
-        return;
-      }
-
-      if (e.target instanceof Line && this.pointService.getLastPoint() === undefined) {
-        this.shapeService.startEditingLine(e.target);
-        this.updateCounters();
-      } else {
-        if (this.shapeService.getShape() === undefined) {
-          // start the new shape
-          this.shapeService.startLine();
-        }
-
-        var point = new Point(e.evt.offsetX, e.evt.offsetY);
-        if (this.pointService.isSamePointAsLastPoint(point)) {
-          // clicked same point - finish shape
-          this.shapeService.finishLine();
-          this.updateCounters();
-        } else {
-          // extend the shape by the new point
-          this.shapeService.addPointToLine(point);
-          this.updateCounters();
-        }
-      }
-
-      this.layerService.draw();
+      this.handleMouseUpEvent(e);
     });
 
     stage.on('mousemove', (e) => {
-      if (this.pointService.getLastPoint() === undefined) {
-        // last point not defined so cannot draw a line
-        return;
-      }
-
-      this.shapeService.calculateLine(new Point(e.evt.offsetX, e.evt.offsetY));
+      this.handleMouseMoveEvent(e);
     });
   }
 
-  // END: shape actions
+  // TODO docs
+  private handleMouseUpEvent(e: any) {
+    if (this.shapeService.isDragAction) {
+      // part of drag action - ignore this click
+      return;
+    }
 
-  // START: Helpers
-  private updateCounters() {
-    this.pointCounter.nativeElement.innerHTML = this.shapeService.getPointsNumber();
-    this.shapeCounter.nativeElement.innerHTML = this.shapeService.getShapeNumber();
+    if (
+      e.target instanceof Line &&
+      this.pointService.getLastPoint() === undefined
+    ) {
+      this.shapeService.startEditingLine(e.target);
+      this.updateCounters();
+    } else {
+      if (this.shapeService.getShape() === undefined) {
+        // start the new shape
+        this.shapeService.startLine();
+      }
+
+      var point = new Point(e.evt.offsetX, e.evt.offsetY);
+      if (this.pointService.isSamePointAsLastPoint(point)) {
+        // clicked same point - finish shape
+        this.shapeService.finishLine();
+        this.updateCounters();
+      } else {
+        // extend the shape by the new point
+        this.shapeService.addPointToLine(point);
+        this.updateCounters();
+      }
+    }
+
+    this.layerService.draw();
   }
-  // END: Helpers
+
+  // TODO docs
+  private handleMouseMoveEvent(e: any) {
+    if (this.pointService.getLastPoint() === undefined) {
+      // last point not defined so cannot draw a line
+      return;
+    }
+
+    this.shapeService.calculateLine(new Point(e.evt.offsetX, e.evt.offsetY));
+  }
+
+  private updateCounters() {
+    this.pointCounter.nativeElement.innerHTML =
+      this.shapeService.getPointsNumber();
+    this.shapeCounter.nativeElement.innerHTML =
+      this.shapeService.getShapeNumber();
+  }
 
   // START: Download and upload
 
