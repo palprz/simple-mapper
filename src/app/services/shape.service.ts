@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
-import { shapes } from 'konva/lib/Shape';
+import { Line } from 'konva/lib/shapes/Line';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Point } from '../models/point.model';
 import { Shape } from '../models/shape.model';
 import { LayerService } from './layer.service';
+import { PointService } from './point.service';
 
 @Injectable({ providedIn: 'root' })
 export class ShapeService {
@@ -13,17 +14,18 @@ export class ShapeService {
   private shape: any;
   private shapes: Shape[] = [];
 
-  constructor(public layerService: LayerService) {}
+  constructor(
+    public layerService: LayerService,
+    public pointService: PointService
+  ) {}
 
   /**
    * Start the Line and hold it as a class variable.
-   * @returns
    */
   public startLine() {
     console.log('Start the line');
-    var shape = this.createBasicNewLine();
-    this.layerService.addShape(shape);
-    return shape;
+    this.shape = this.createBasicNewLine();
+    this.layerService.addShape(this.shape);
   }
 
   /**
@@ -40,11 +42,11 @@ export class ShapeService {
    * Calculate the place of the new coordinates and define new Line based on predicted values.
    * @param point the current place of mouse on the stage. Contains X and Y coordinates.
    */
-  public calculateLine(shape: any, point: Point) {
-    this.addPointToShape(shape, point);
+  public calculateLine(point: Point) {
+    this.addPointToShape(this.shape, point);
     this.layerService.draw();
-    shape.attrs['points'].pop();
-    shape.attrs['points'].pop();
+    this.shape.attrs['points'].pop();
+    this.shape.attrs['points'].pop();
   }
 
   /**
@@ -89,11 +91,63 @@ export class ShapeService {
   }
 
   /**
+   * Store finished shape with rest shapes.
+   * @param shape shape to store
+   */
+  public saveShape(shape: Konva.Line) {
+    this.getShapes().push(
+      new Shape(
+        shape.attrs['id'],
+        'line',
+        shape.attrs['points'],
+        shape.attrs['x'],
+        shape.attrs['y']
+      )
+    );
+    console.log('SAVING shape', this.getShapes()[this.getShapes().length - 1]);
+  }
+
+  /**
+   * Update current hold Line by new coordinates.
+   * @param point contains X and Y coordinates
+   */
+   public addPointToLine(point: Point) {
+    console.log('ADD POINT the line');
+    this.addPointToShape(this.shape, point);
+    this.pointService.setLastPoint(point);
+  }
+
+  /**
+   * Finished currently holded Line. Finished Line will be stored in class variable with rest shapes.
+   */
+   public finishLine() {
+    console.log('FINISH the line');
+    this.getShape().attrs['stroke'] = 'black';
+    this.saveShape(this.shape);
+    this.shape = undefined;
+    this.pointService.setLastPoint(undefined);
+  }
+
+  /**
+   * Edit existing Line on the layer.
+   * @param shape shape to be select as current Line to modify
+   */
+  public startEditingLine(shape: Line) {
+    shape.attrs['stroke'] = 'red';
+    this.shape = shape;
+    this.pointService.setLastPoint(this.getLastPointFromShape(this.shape));
+    this.shapes = this.getShapes().filter((el) => {
+      // remove existing shape from the stored list
+      return el.getID() !== shape.attrs['id'];
+    });
+  }
+
+  /**
    * Add new point to the shape. We should calculate coordinates of the new point WITHOUT offset to make sure the offset from the shape will not be doubled.
    * @param shape contains coordinates which should be removed from the new point
    * @param newPoint the new point to be added
    */
-  public addPointToShape(shape: any, newPoint: Point) {
+  private addPointToShape(shape: any, newPoint: Point) {
     shape.attrs['points'].push(
       newPoint.getX() - this.getOffset(shape, 'x'),
       newPoint.getY() - this.getOffset(shape, 'y')
@@ -109,7 +163,7 @@ export class ShapeService {
    * @param shape contains attributes with coordinates
    * @returns Points or undefined (if not enough coordinates)
    */
-  public getLastPointFromShape(shape: any) {
+  private getLastPointFromShape(shape: any) {
     var coords = shape.attrs['points'];
     if (coords.length < 2) {
       // 0 or 1 coords - not enough to create point
@@ -152,7 +206,20 @@ export class ShapeService {
       this.isDragAction = false;
     });
   }
-  //
+  
+
+  // TODO docs
+  public processUpload(data: any) {
+    this.layerService.clear();
+
+    var newDatas = JSON.parse(data);
+    for (var i = 0; newDatas.length > i; i++) {
+      this.uploadLine(newDatas[i]);
+    }
+
+    this.shapes = newDatas;
+    this.layerService.draw();
+  }
 
   //TODO maybe it will be not used outside shapeService?
   public getShape() {

@@ -40,20 +40,23 @@ export class AppComponent implements AfterViewInit {
       }
 
       if (e.target instanceof Line && this.pointService.getLastPoint() === undefined) {
-        this.startEditingLine(e.target);
+        this.shapeService.startEditingLine(e.target);
+        this.updateCounters();
       } else {
-        if (this.shape === undefined) {
+        if (this.shapeService.getShape() === undefined) {
           // start the new shape
-          this.shape = this.shapeService.startLine();
+          this.shapeService.startLine();
         }
 
         var point = new Point(e.evt.offsetX, e.evt.offsetY);
         if (this.pointService.isSamePointAsLastPoint(point)) {
           // clicked same point - finish shape
-          this.finishLine();
+          this.shapeService.finishLine();
+          this.updateCounters();
         } else {
           // extend the shape by the new point
-          this.addPointToLine(point);
+          this.shapeService.addPointToLine(point);
+          this.updateCounters();
         }
       }
 
@@ -66,64 +69,8 @@ export class AppComponent implements AfterViewInit {
         return;
       }
 
-      this.shapeService.calculateLine(this.shape, new Point(e.evt.offsetX, e.evt.offsetY));
+      this.shapeService.calculateLine(new Point(e.evt.offsetX, e.evt.offsetY));
     });
-  }
-
-  /**
-   * Edit existing Line on the layer.
-   * @param shape shape to be select as current Line to modify
-   */
-  private startEditingLine(shape: Line) {
-    this.shape = shape;
-    this.shape.attrs['stroke'] = 'red';
-    this.pointService.setLastPoint(this.shapeService.getLastPointFromShape(this.shape));
-    this.shapes = this.shapes.filter((el) => {
-      // remove existing shape from the stored list
-      return el.getID() !== shape.attrs['id'];
-    });
-    this.updateCounters();
-  }
-
-  /**
-   * Update current hold Line by new coordinates.
-   * @param point contains X and Y coordinates
-   */
-  private addPointToLine(point: Point) {
-    console.log('ADD POINT the line');
-    this.shapeService.addPointToShape(this.shape, point);
-
-    this.updateCounters();
-    this.pointService.setLastPoint(point);
-  }
-
-  /**
-   * Finished currently holded Line. Finished Line will be stored in class variable with rest shapes.
-   */
-  private finishLine() {
-    console.log('FINISH the line');
-    this.shape.attrs['stroke'] = 'black';
-    this.saveShape(this.shape);
-    this.shape = undefined;
-    this.pointService.setLastPoint(undefined);
-    this.updateCounters();
-  }
-
-  /**
-   * Store finished shape with rest shapes.
-   * @param shape shape to store
-   */
-  private saveShape(shape: Konva.Line) {
-    this.shapes.push(
-      new Shape(
-        shape.attrs['id'],
-        'line',
-        shape.attrs['points'],
-        shape.attrs['x'],
-        shape.attrs['y']
-      )
-    );
-    console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
   }
 
   // END: shape actions
@@ -138,7 +85,7 @@ export class AppComponent implements AfterViewInit {
   // START: Download and upload
 
   public download() {
-    this.dataService.download(this.shapes);
+    this.dataService.download(this.shapeService.getShapes());
   }
 
   public handleUploadedFile(event: any) {
@@ -147,21 +94,10 @@ export class AppComponent implements AfterViewInit {
     const fileReader = new FileReader();
     fileReader.readAsText(file, 'UTF-8');
     fileReader.onload = () => {
-      this.processUpload(fileReader.result);
+      this.shapeService.processUpload(fileReader.result);
+      this.updateCounters();
     };
   }
 
-  private processUpload(data: any) {
-    this.layerService.clear();
-
-    var newDatas = JSON.parse(data);
-    for (var i = 0; newDatas.length > i; i++) {
-      this.shapeService.uploadLine(newDatas[i]);
-    }
-
-    this.shapes = newDatas;
-    this.layerService.draw();
-    this.updateCounters();
-  }
   // END: Download and upload
 }
