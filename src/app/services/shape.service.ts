@@ -10,14 +10,16 @@ import { LayerService } from './layer.service';
 @Injectable({ providedIn: 'root' })
 export class ShapeService {
   public isDragAction: boolean;
+  private shape: any;
+  private shapes: Shape[] = [];
 
   constructor(public layerService: LayerService) {}
 
   /**
    * Start the Line and hold it as a class variable.
-   * @returns 
+   * @returns
    */
-   public startLine() {
+  public startLine() {
     console.log('Start the line');
     var shape = this.createBasicNewLine();
     this.layerService.addShape(shape);
@@ -28,7 +30,7 @@ export class ShapeService {
    * Add new Line based on provided input.
    * @param newLine contains points to define new Line.
    */
-   public uploadLine(newLine: any) {
+  public uploadLine(newLine: any) {
     console.log('UPLOAD the line');
     var uploadedLine = this.createNewLine(newLine);
     this.layerService.addShape(uploadedLine);
@@ -38,7 +40,7 @@ export class ShapeService {
    * Calculate the place of the new coordinates and define new Line based on predicted values.
    * @param point the current place of mouse on the stage. Contains X and Y coordinates.
    */
-   public calculateLine(shape: any, point: Point) {
+  public calculateLine(shape: any, point: Point) {
     this.addPointToShape(shape, point);
     this.layerService.draw();
     shape.attrs['points'].pop();
@@ -117,11 +119,25 @@ export class ShapeService {
     return new Point(coords[coords.length - 2], coords[coords.length - 1]);
   }
 
+  // TODO docs
+  public getPointsNumber() {
+    var pointsLength = 0;
+    this.getShapes().forEach(
+      (el) => (pointsLength = el.getPoints().length + pointsLength)
+    );
+    return pointsLength / 2;
+  }
+
+  // TODO docs
+  public getShapeNumber() {
+    return this.getShapes().length;
+  }
+
   /**
    * Change cursor for the shape after mouse over it.
    * @param shape the shape which will have changed cursor
    */
-  public addEventsForShape(shape: any) {
+  private addEventsForShape(shape: any) {
     shape.on('mouseover', () => {
       document.body.style.cursor = 'pointer';
     });
@@ -135,5 +151,16 @@ export class ShapeService {
     shape.on('dragend', () => {
       this.isDragAction = false;
     });
+  }
+  //
+
+  //TODO maybe it will be not used outside shapeService?
+  public getShape() {
+    return this.shape;
+  }
+
+  //TODO maybe it will be not used outside shapeService?
+  public getShapes() {
+    return this.shapes;
   }
 }

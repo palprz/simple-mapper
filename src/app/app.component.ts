@@ -19,7 +19,6 @@ export class AppComponent implements AfterViewInit {
 
   private shape: any;
   private shapes: Shape[] = [];
-  private lastPoint: any;
 
   constructor(
     public dataService: DataService,
@@ -40,7 +39,7 @@ export class AppComponent implements AfterViewInit {
         return;
       }
 
-      if (e.target instanceof Line && this.lastPoint === undefined) {
+      if (e.target instanceof Line && this.pointService.getLastPoint() === undefined) {
         this.startEditingLine(e.target);
       } else {
         if (this.shape === undefined) {
@@ -49,7 +48,7 @@ export class AppComponent implements AfterViewInit {
         }
 
         var point = new Point(e.evt.offsetX, e.evt.offsetY);
-        if (this.pointService.areSamePoints(this.lastPoint, point)) {
+        if (this.pointService.isSamePointAsLastPoint(point)) {
           // clicked same point - finish shape
           this.finishLine();
         } else {
@@ -62,7 +61,7 @@ export class AppComponent implements AfterViewInit {
     });
 
     stage.on('mousemove', (e) => {
-      if (this.lastPoint === undefined) {
+      if (this.pointService.getLastPoint() === undefined) {
         // last point not defined so cannot draw a line
         return;
       }
@@ -78,7 +77,7 @@ export class AppComponent implements AfterViewInit {
   private startEditingLine(shape: Line) {
     this.shape = shape;
     this.shape.attrs['stroke'] = 'red';
-    this.lastPoint = this.shapeService.getLastPointFromShape(this.shape);
+    this.pointService.setLastPoint(this.shapeService.getLastPointFromShape(this.shape));
     this.shapes = this.shapes.filter((el) => {
       // remove existing shape from the stored list
       return el.getID() !== shape.attrs['id'];
@@ -95,7 +94,7 @@ export class AppComponent implements AfterViewInit {
     this.shapeService.addPointToShape(this.shape, point);
 
     this.updateCounters();
-    this.lastPoint = point;
+    this.pointService.setLastPoint(point);
   }
 
   /**
@@ -106,7 +105,7 @@ export class AppComponent implements AfterViewInit {
     this.shape.attrs['stroke'] = 'black';
     this.saveShape(this.shape);
     this.shape = undefined;
-    this.lastPoint = undefined;
+    this.pointService.setLastPoint(undefined);
     this.updateCounters();
   }
 
@@ -131,13 +130,8 @@ export class AppComponent implements AfterViewInit {
 
   // START: Helpers
   private updateCounters() {
-    // TODO I've broke it once again
-    // var pointsLength = 0;
-    // this.shapes.forEach(
-    //   (el) => (pointsLength = el.getPoints().length + pointsLength)
-    // );
-    // this.pointCounter.nativeElement.innerHTML = pointsLength / 2;
-    this.shapeCounter.nativeElement.innerHTML = this.shapes.length;
+    this.pointCounter.nativeElement.innerHTML = this.shapeService.getPointsNumber();
+    this.shapeCounter.nativeElement.innerHTML = this.shapeService.getShapeNumber();
   }
   // END: Helpers
 
