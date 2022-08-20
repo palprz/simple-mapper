@@ -99,12 +99,31 @@ export class AppComponent implements AfterViewInit {
       // no file to upload - ignore event
       return;
     }
-    var file = event.target.files[0];
-    const fileReader = new FileReader();
-    fileReader.readAsText(file, 'UTF-8');
+    var fileReader = new FileReader();
+    fileReader.readAsText(event.target.files[0], 'UTF-8');
     fileReader.onload = () => {
       this.shapeService.processUpload(fileReader.result);
       this.updateCounters();
     };
+  }
+
+  // TODO docs
+  public uploadStageBackground(event: any) {
+    if (event.target.files.length == 0) {
+      // no file to upload - ignore event
+      return;
+    }
+    var reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onload = () => {
+      this.layerService.uploadStageBackground(reader.result);
+    };
+  }
+
+  // TODO temporarily to check if offset is added properly
+  // TODO docs
+  public setBackgroundOffset(event: any) {
+    var offsets = event.target.value.split(',', 2);
+    this.layerService.setBackgroundOffset(offsets[0], offsets[1]);
   }
 }
