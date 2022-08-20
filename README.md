@@ -20,7 +20,7 @@ TODO update this readme
 - rotate shapes https://konvajs.org/docs/animations/Rotation.html
 - scale shapes https://konvajs.org/docs/select_and_transform/Resize_Snaps.html
 - context menu for stage https://konvajs.org/docs/sandbox/Canvas_Context_Menu.html
-- modify (remove point) existing line (maybe with using context menu even without selecting the shape?)
+- modify (remove point) existing line (maybe with using context menu even without selecting the shape?) https://konvajs.org/docs/performance/Avoid_Memory_Leaks.html
 - adding text (by context menu): https://konvajs.org/docs/shapes/Text.html
 - able to change line to be polygon
 - able to change polygon to be line
@@ -31,6 +31,7 @@ TODO update this readme
 - better styling
 - nicer buttons 
 - think about current UI and UX
+- optimalisation https://konvajs.org/docs/performance/Optimize_Strokes.html
 - (?) CTRL + Z or shortcuts in general
 - (?) preset
 - (?) split shapes

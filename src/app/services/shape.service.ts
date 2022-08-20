@@ -136,6 +136,7 @@ export class ShapeService {
     this.shape = shape;
     this.pointService.lastPoint = this.getLastPointFromShape(this.shape);
     this.shapes = this.shapes.filter((el) => {
+      // todo try this https://konvajs.org/docs/selectors/Select_by_id.html
       // remove existing shape from the stored list
       return el.id !== shape.attrs['id'];
     });
