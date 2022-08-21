@@ -249,17 +249,16 @@ export class ShapeService {
 
   /**
    * Handle provided data and add them to the layer.
-   * @param data datat to process
+   * @param newDatas new shapes to add
    */
-  public processUpload(data: any) {
+  public processUpload(newShapes: any) {
     this.layerService.clear();
 
-    var newDatas = JSON.parse(data);
-    for (var i = 0; newDatas.length > i; i++) {
-      this.uploadLine(newDatas[i]);
+    for (var i = 0; newShapes.length > i; i++) {
+      this.uploadLine(newShapes[i]);
     }
 
-    this.shapes = newDatas;
+    this.shapes = newShapes;
     this.layerService.draw();
   }
 

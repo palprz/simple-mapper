@@ -6,6 +6,7 @@ import { ShapeService } from './services/shape.service';
 import { DataService } from './services/data.service';
 import { LayerService } from './services/layer.service';
 import { Stage } from 'konva/lib/Stage';
+import { StoreData } from './models/store-data.model';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +18,6 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('shapeCounter') shapeCounter: ElementRef;
   @ViewChild('menu') menu: ElementRef;
 
-  private stage: Stage;
-
   constructor(
     public dataService: DataService,
     public layerService: LayerService,
@@ -27,19 +26,20 @@ export class AppComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.stage = this.layerService.initStage();
+    this.layerService.initStage();
+
     this.updateCounters();
 
     // assign events to the stage
-    this.stage.on('mouseup', (e) => {
+    this.layerService.stage.on('mouseup', (e) => {
       this.handleMouseUpEvent(e);
     });
 
-    this.stage.on('mousemove', (e) => {
+    this.layerService.stage.on('mousemove', (e) => {
       this.handleMouseMoveEvent(e);
     });
 
-    this.stage.on('contextmenu', (e) => {
+    this.layerService.stage.on('contextmenu', (e) => {
       e.evt.preventDefault();
       this.displayContextMenu();
     });
@@ -113,14 +113,15 @@ export class AppComponent implements AfterViewInit {
    * Display context menu next to the pointer.
    */
   private displayContextMenu() {
-    var pointerCoords = this.stage.getPointerPosition();
-    var stageContainer = this.stage.container().getBoundingClientRect();
+    var pointerCoords = this.layerService.stage.getPointerPosition();
     // this shouldn't be possible but check just in case
     if (pointerCoords !== null) {
       var menuStyle = this.menu.nativeElement.style;
       menuStyle.display = 'initial';
-      menuStyle.top = stageContainer.top + pointerCoords.y + 'px';
-      menuStyle.left = stageContainer.left + pointerCoords.x + 'px';
+      menuStyle.top =
+        this.layerService.stageContainer.top + pointerCoords.y + 'px';
+      menuStyle.left =
+        this.layerService.stageContainer.left + pointerCoords.x + 'px';
     }
   }
 
@@ -154,7 +155,14 @@ export class AppComponent implements AfterViewInit {
   }
 
   public download() {
-    this.dataService.download();
+    var datasToDownload = new StoreData(
+      // remove borders from below value
+      this.layerService.stageContainer.width - 2,
+      // remove borders from below value
+      this.layerService.stageContainer.height - 2,
+      this.shapeService.shapes
+    );
+    this.dataService.download(datasToDownload);
   }
 
   public handleUploadedFile(event: any) {
@@ -165,7 +173,12 @@ export class AppComponent implements AfterViewInit {
     var fileReader = new FileReader();
     fileReader.readAsText(event.target.files[0], 'UTF-8');
     fileReader.onload = () => {
-      this.shapeService.processUpload(fileReader.result);
+      // TODO validation
+      var newDatas = JSON.parse(<any>fileReader.result);
+      // set proper size of the stage
+      this.layerService.processUpload(newDatas.stageX, newDatas.stageY);
+      // setup all shapes
+      this.shapeService.processUpload(newDatas.shapes);
       this.updateCounters();
     };
   }

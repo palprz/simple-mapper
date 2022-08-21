@@ -8,20 +8,39 @@ export class LayerService {
   private _stage: Stage;
 
   /**
-   * Create the stage and save the created layer to the class field.
    * @returns created stage
    */
-  public initStage() {
+  /**
+   * Create the stage and save the created layer to the class field.
+   * @param stageX the width of the new stage
+   * @param stageY the height of the new stage
+   */
+  public initStage(stageX = 800, stageY = 400) {
     var stage = new Konva.Stage({
       container: 'canvas-container',
-      width: 800,
-      height: 400,
+      width: stageX,
+      height: stageY,
     });
+
+    // add CSS based on provided X and Y
+    var container = document.getElementById('canvas-container');
+    if (container != undefined) {
+      container.style.width = stageX + 'px';
+      container.style.height = stageY + 'px';
+    }
 
     this._layer = new Konva.Layer();
     stage.add(this.layer);
     this.stage = stage;
-    return stage;
+  }
+
+  /**
+   * Override existing stage by the new stage with provided details of width and height.
+   * @param stageX the width of the new stage
+   * @param stageY the height of the new stage
+   */
+  public processUpload(stageX: number, stageY: number) {
+    this.initStage(stageX, stageY);
   }
 
   // TODO docs
@@ -47,12 +66,16 @@ export class LayerService {
     return this._layer;
   }
 
-  private set stage(stage: Stage) {
+  set stage(stage: Stage) {
     this._stage = stage;
   }
 
-  private get stage() {
+  get stage() {
     return this._stage;
+  }
+
+  get stageContainer() {
+    return this._stage.container().getBoundingClientRect();
   }
 
   /**
