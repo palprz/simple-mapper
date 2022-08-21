@@ -56,7 +56,14 @@ export class AppComponent implements AfterViewInit {
       }
 
       var point = new Point(e.evt.offsetX, e.evt.offsetY);
-      if (this.pointService.isSamePointAsLastPoint(point)) {
+
+      if (this.hasInteractionWithFirstPoint(this.shapeService.shape, e.evt)) {
+        // interaction with first point so close the shape and finish it
+        var points = this.shapeService.shape.attrs['points'];
+        this.shapeService.addPointToLine(new Point(points[0], points[1]));
+        this.shapeService.finishLine();
+        this.updateCounters();
+      } else if (this.pointService.isSamePointAsLastPoint(point)) {
         // clicked same point - finish shape
         this.shapeService.finishLine();
         this.updateCounters();
@@ -80,7 +87,35 @@ export class AppComponent implements AfterViewInit {
       return;
     }
 
+    if (this.hasInteractionWithFirstPoint(this.shapeService.shape, e.evt)) {
+      this.shapeService.shape.attrs['stroke'] = 'green';
+    } else {
+      this.shapeService.shape.attrs['stroke'] = 'red';
+    }
+
     this.shapeService.calculateLine(new Point(e.evt.offsetX, e.evt.offsetY));
+  }
+
+  /**
+   * Check if coordinates from the event are close to the first point of the shape.
+   * @param shape contains point which will be the main point to check
+   * @param event contains coordinates of X and Y which will tell where is mouse
+   * @returns
+   */
+  private hasInteractionWithFirstPoint(shape: any, event: any) {
+    // pixels of the margin to detect interaction with the point
+    var margin = 10;
+
+    var x1 = shape.attrs['points'][0];
+    var y1 = shape.attrs['points'][1];
+    var x2 = event.offsetX;
+    var y2 = event.offsetY;
+    return (
+      x1 < x2 + margin &&
+      x1 > x2 - margin &&
+      y1 < y2 + margin &&
+      y1 > y2 - margin
+    );
   }
 
   private updateCounters() {

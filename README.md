@@ -11,10 +11,10 @@ TODO update this readme
 - offset for background image
 - select an existing line
 - extend an  existing line
+- detect the nearest point
 
 ## TODO ideas how to improve the tool:
 
-- detect the nearest point(collision?) https://konvajs.org/docs/sandbox/Collision_Detection.html
 - able to add polygon/transfer line to be polygon https://konvajs.org/docs/shapes/Line_-_Polygon.html
 - fill background between lines https://konvajs.org/docs/styling/Fill.html
 - rotate shapes https://konvajs.org/docs/animations/Rotation.html

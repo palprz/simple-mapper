@@ -135,11 +135,12 @@ export class ShapeService {
     shape.attrs['stroke'] = 'red';
     this.shape = shape;
     this.pointService.lastPoint = this.getLastPointFromShape(this.shape);
-    this.shapes = this.shapes.filter((el) => {
-      // todo try this https://konvajs.org/docs/selectors/Select_by_id.html
-      // remove existing shape from the stored list
-      return el.id !== shape.attrs['id'];
-    });
+    // TODO this doesn't work - many errors. Figure out how to resolve this
+    // this.shapes = this.shapes.filter((el) => {
+    //   // todo try this https://konvajs.org/docs/selectors/Select_by_id.html
+    //   // remove existing shape from the stored list
+    //   return el.id !== shape.attrs['id'];
+    // });
   }
 
   /**
