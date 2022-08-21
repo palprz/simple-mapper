@@ -32,7 +32,7 @@ export class ShapeService {
    * Add new Line based on provided input.
    * @param newLine contains points to define new Line.
    */
-  public uploadLine(newLine: any) {
+  private uploadLine(newLine: any) {
     console.log('UPLOAD the line');
     var uploadedLine = this.createNewLine(newLine);
     this.layerService.addShape(uploadedLine);
@@ -78,12 +78,17 @@ export class ShapeService {
     line.attrs['points'] = [...storedData.points];
     line.attrs['stroke'] = 'black';
 
-    if (storedData.offsetX !== 0) {
+    if (storedData.offsetX !== undefined) {
       line.attrs['x'] = storedData.offsetX;
     }
 
-    if (storedData.offsetY !== 0) {
+    if (storedData.offsetY !== undefined) {
       line.attrs['y'] = storedData.offsetY;
+    }
+
+    if (storedData.type === 'polygon') {
+      line.attrs['closed'] = 'true';
+      line.attrs['fill'] = storedData.fill;
     }
 
     return line;
@@ -94,16 +99,28 @@ export class ShapeService {
    * @param shape shape to store
    */
   public saveShape(shape: Konva.Line) {
+    this.removeShapeFromStoredList(shape);
+
     this.shapes.push(
       new Shape(
         shape.attrs['id'],
-        'line',
+        shape.attrs['closed'] === 'true' ? 'polygon' : 'line',
         shape.attrs['points'],
+        shape.attrs['fill'],
         shape.attrs['x'],
         shape.attrs['y']
       )
     );
     console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
+  }
+
+  //TODO docs
+  private removeShapeFromStoredList(shape: Konva.Line) {
+    var index = this.shapes.findIndex((el) => el.id == shape.attrs['id']);
+    console.log('index', index);
+    if (index > -1) {
+      this.shapes.splice(index, 1);
+    }
   }
 
   /**
@@ -114,6 +131,25 @@ export class ShapeService {
     console.log('ADD POINT the line');
     this.addPointToShape(this.shape, point);
     this.pointService.lastPoint = point;
+  }
+
+  /**
+   * Close the line to create polygon type.
+   */
+  public closeLine() {
+    this.shape.attrs['closed'] = 'true';
+    // TODO just temp colour
+    this.shape.attrs['fill'] = 'grey';
+  }
+
+  /**
+   * Open the line to remove polygon type.
+   */
+  // TODO not used and not tested
+  public openLine() {
+    this.shape.attrs['closed'] = 'false';
+    // TODO just temp colour
+    this.shape.attrs['fill'] = 'white';
   }
 
   /**
@@ -135,12 +171,7 @@ export class ShapeService {
     shape.attrs['stroke'] = 'red';
     this.shape = shape;
     this.pointService.lastPoint = this.getLastPointFromShape(this.shape);
-    // TODO this doesn't work - many errors. Figure out how to resolve this
-    // this.shapes = this.shapes.filter((el) => {
-    //   // todo try this https://konvajs.org/docs/selectors/Select_by_id.html
-    //   // remove existing shape from the stored list
-    //   return el.id !== shape.attrs['id'];
-    // });
+    this.removeShapeFromStoredList(shape);
   }
 
   /**
@@ -211,6 +242,8 @@ export class ShapeService {
     });
     shape.on('dragend', () => {
       this.isDragAction = false;
+      // offset has been changed - save the shape
+      this.saveShape(shape);
     });
   }
 
@@ -243,7 +276,7 @@ export class ShapeService {
   }
 
   set shapes(shapes: Shape[]) {
-    this._shape = shapes;
+    this._shapes = shapes;
   }
 
   get isDragAction(): boolean {

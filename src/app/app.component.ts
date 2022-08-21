@@ -61,6 +61,7 @@ export class AppComponent implements AfterViewInit {
         // interaction with first point so close the shape and finish it
         var points = this.shapeService.shape.attrs['points'];
         this.shapeService.addPointToLine(new Point(points[0], points[1]));
+        this.shapeService.closeLine();
         this.shapeService.finishLine();
         this.updateCounters();
       } else if (this.pointService.isSamePointAsLastPoint(point)) {

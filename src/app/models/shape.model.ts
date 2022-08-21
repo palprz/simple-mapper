@@ -1,41 +1,24 @@
 export class Shape {
-  private _id: string;
-  private _type: string;
-  private _points: number[];
-  private _offsetX: number;
-  private _offsetY: number;
+  public id: string;
+  public type: string;
+  public points: number[];
+  public fill: any;
+  public offsetX: any;
+  public offsetY: any;
 
   constructor(
     id: string,
     type: string,
     points: number[],
+    fill: any,
     offsetX: number,
     offsetY: number
   ) {
-    this._id = id;
-    this._type = type;
-    this._points = points;
-    this._offsetX = offsetX ? offsetX : 0;
-    this._offsetY = offsetY ? offsetY : 0;
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  get type(): string {
-    return this._type;
-  }
-
-  get points(): number[] {
-    return this._points;
-  }
-
-  get offsetX(): number {
-    return this._offsetX;
-  }
-
-  get offsetY(): number {
-    return this._offsetY;
+    this.id = id;
+    this.type = type;
+    this.points = points;
+    this.fill = fill ? fill : undefined;
+    this.offsetX = offsetX ? offsetX : undefined;
+    this.offsetY = offsetY ? offsetY : undefined;
   }
 }
