@@ -8,3 +8,11 @@
 
 
 <div id="canvas-container"></div>
+<!-- TODO move it as a separate component -->
+<div id="menu" #menu>
+    <div>
+        <button id="delete-point-btn" (click)="contextMenuDeletePoint($event)">Delete point</button>
+        <button id="cancel-action-btn" (click)="contextMenuCancelCurrentAction($event)">Cancel current action</button>
+        <button id="close-btn" (click)="contextMenuCloseMenuAction($event)">Close menu</button>
+    </div>
+</div>

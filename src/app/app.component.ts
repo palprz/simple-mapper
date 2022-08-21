@@ -5,6 +5,7 @@ import { PointService } from './services/point.service';
 import { ShapeService } from './services/shape.service';
 import { DataService } from './services/data.service';
 import { LayerService } from './services/layer.service';
+import { Stage } from 'konva/lib/Stage';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,9 @@ import { LayerService } from './services/layer.service';
 export class AppComponent implements AfterViewInit {
   @ViewChild('pointCounter') pointCounter: ElementRef;
   @ViewChild('shapeCounter') shapeCounter: ElementRef;
+  @ViewChild('menu') menu: ElementRef;
+
+  private stage: Stage;
 
   constructor(
     public dataService: DataService,
@@ -23,16 +27,21 @@ export class AppComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    var stage = this.layerService.initStage();
+    this.stage = this.layerService.initStage();
     this.updateCounters();
 
     // assign events to the stage
-    stage.on('mouseup', (e) => {
+    this.stage.on('mouseup', (e) => {
       this.handleMouseUpEvent(e);
     });
 
-    stage.on('mousemove', (e) => {
+    this.stage.on('mousemove', (e) => {
       this.handleMouseMoveEvent(e);
+    });
+
+    this.stage.on('contextmenu', (e) => {
+      e.evt.preventDefault();
+      this.displayContextMenu();
     });
   }
 
@@ -41,6 +50,9 @@ export class AppComponent implements AfterViewInit {
    * @param e event
    */
   private handleMouseUpEvent(e: any) {
+    // hide context menu after any click on the stage
+    this.menu.nativeElement.style.display = 'none';
+
     if (this.shapeService.isDragAction) {
       // part of drag action - ignore this click
       return;
@@ -95,6 +107,21 @@ export class AppComponent implements AfterViewInit {
     }
 
     this.shapeService.calculateLine(new Point(e.evt.offsetX, e.evt.offsetY));
+  }
+
+  /**
+   * Display context menu next to the pointer.
+   */
+  private displayContextMenu() {
+    var pointerCoords = this.stage.getPointerPosition();
+    var stageContainer = this.stage.container().getBoundingClientRect();
+    // this shouldn't be possible but check just in case
+    if (pointerCoords !== null) {
+      var menuStyle = this.menu.nativeElement.style;
+      menuStyle.display = 'initial';
+      menuStyle.top = stageContainer.top + pointerCoords.y + 'px';
+      menuStyle.left = stageContainer.left + pointerCoords.x + 'px';
+    }
   }
 
   /**
@@ -161,5 +188,20 @@ export class AppComponent implements AfterViewInit {
   public setBackgroundOffset(event: any) {
     var offsets = event.target.value.split(',', 2);
     this.layerService.setBackgroundOffset(offsets[0], offsets[1]);
+  }
+
+  // TODO docs
+  public contextMenuDeletePoint(event: any) {
+    //TODO
+  }
+
+  // TODO docs
+  public contextMenuCancelCurrentAction(event: any) {
+    //TODO
+  }
+
+  // TODO docs
+  public contextMenuCloseMenuAction(event: any) {
+    this.menu.nativeElement.style.display = 'none';
   }
 }

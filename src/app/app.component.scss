@@ -5,3 +5,26 @@
   border: 1px solid black;
   margin-top: 20px;
 }
+
+#menu {
+  display: none;
+  position: absolute;
+  width: 150px;
+  background-color: white;
+  box-shadow: 0 0 5px grey;
+  border-radius: 3px;
+  button {
+    width: 100%;
+    background-color: #fff;
+    border: none;
+    margin: 0;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    &:hover {
+      background-color: lightgray;
+    }
+    &:last-child {
+      border: initial;
+    }
+  }
+}
