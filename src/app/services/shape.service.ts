@@ -78,11 +78,11 @@ export class ShapeService {
     line.attrs['points'] = [...storedData.points];
     line.attrs['stroke'] = 'black';
 
-    if (storedData.offsetX !== undefined) {
+    if (storedData.offsetX) {
       line.attrs['x'] = storedData.offsetX;
     }
 
-    if (storedData.offsetY !== undefined) {
+    if (storedData.offsetY) {
       line.attrs['y'] = storedData.offsetY;
     }
 
@@ -187,7 +187,7 @@ export class ShapeService {
   }
 
   private getOffset(shape: any, coord: string) {
-    return shape.attrs[coord] === undefined ? 0 : shape.attrs[coord];
+    return shape.attrs[coord] ? shape.attrs[coord] : 0;
   }
 
   /**

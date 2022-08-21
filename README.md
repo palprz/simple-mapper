@@ -17,10 +17,10 @@ TODO update this readme
 - context menu for stage
 - saving stage as a part of config
 - add default size of the stage (configurable)
+- finish by clicking same point (around 10 px margin)
 
 ## TODO ideas how to improve the tool:
 
-- finish by clicking same point (around 10 px margin)
 - modify (remove point) existing line (maybe with using context menu even without selecting the shape?) https://konvajs.org/docs/performance/Avoid_Memory_Leaks.html
 - adding text (by context menu): https://konvajs.org/docs/shapes/Text.html
 - able to change line to be polygon

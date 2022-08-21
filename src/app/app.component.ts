@@ -5,7 +5,6 @@ import { PointService } from './services/point.service';
 import { ShapeService } from './services/shape.service';
 import { DataService } from './services/data.service';
 import { LayerService } from './services/layer.service';
-import { Stage } from 'konva/lib/Stage';
 import { StoreData } from './models/store-data.model';
 
 @Component({
@@ -58,25 +57,27 @@ export class AppComponent implements AfterViewInit {
       return;
     }
 
-    if (e.target instanceof Line && this.pointService.lastPoint === undefined) {
+    if (e.target instanceof Line && !this.pointService.lastPoint) {
       this.shapeService.startEditingLine(e.target);
       this.updateCounters();
     } else {
-      if (this.shapeService.shape === undefined) {
+      if (!this.shapeService.shape) {
         // start the new shape
         this.shapeService.startLine();
       }
 
       var point = new Point(e.evt.offsetX, e.evt.offsetY);
 
-      if (this.hasInteractionWithFirstPoint(this.shapeService.shape, e.evt)) {
+      if (this.pointService.isNearFirstPoint(this.shapeService.shape, e.evt)) {
         // interaction with first point so close the shape and finish it
         var points = this.shapeService.shape.attrs['points'];
         this.shapeService.addPointToLine(new Point(points[0], points[1]));
         this.shapeService.closeLine();
         this.shapeService.finishLine();
         this.updateCounters();
-      } else if (this.pointService.isSamePointAsLastPoint(point)) {
+      } else if (
+        this.pointService.isNearLastPoint(this.shapeService.shape, e.evt)
+      ) {
         // clicked same point - finish shape
         this.shapeService.finishLine();
         this.updateCounters();
@@ -95,12 +96,12 @@ export class AppComponent implements AfterViewInit {
    * @param e event
    */
   private handleMouseMoveEvent(e: any) {
-    if (this.pointService.lastPoint === undefined) {
+    if (!this.pointService.lastPoint) {
       // last point not defined so cannot draw a line
       return;
     }
 
-    if (this.hasInteractionWithFirstPoint(this.shapeService.shape, e.evt)) {
+    if (this.pointService.isNearFirstPoint(this.shapeService.shape, e.evt)) {
       this.shapeService.shape.attrs['stroke'] = 'green';
     } else {
       this.shapeService.shape.attrs['stroke'] = 'red';
@@ -123,28 +124,6 @@ export class AppComponent implements AfterViewInit {
       menuStyle.left =
         this.layerService.stageContainer.left + pointerCoords.x + 'px';
     }
-  }
-
-  /**
-   * Check if coordinates from the event are close to the first point of the shape.
-   * @param shape contains point which will be the main point to check
-   * @param event contains coordinates of X and Y which will tell where is mouse
-   * @returns
-   */
-  private hasInteractionWithFirstPoint(shape: any, event: any) {
-    // pixels of the margin to detect interaction with the point
-    var margin = 10;
-
-    var x1 = shape.attrs['points'][0];
-    var y1 = shape.attrs['points'][1];
-    var x2 = event.offsetX;
-    var y2 = event.offsetY;
-    return (
-      x1 < x2 + margin &&
-      x1 > x2 - margin &&
-      y1 < y2 + margin &&
-      y1 > y2 - margin
-    );
   }
 
   private updateCounters() {
