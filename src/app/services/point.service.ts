@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { NearPoint } from '../models/near-point.model';
+import { Point } from '../models/point.model';
 
 @Injectable({ providedIn: 'root' })
 export class PointService {
@@ -35,7 +37,11 @@ export class PointService {
             event.offsetY
           )
         ) {
-          return shapes[i];
+          var nearShape = shapes[i];
+          return new NearPoint(
+            nearShape,
+            new Point(nearShape.points[j], nearShape.points[j + 1])
+          );
         }
       }
     }
