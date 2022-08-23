@@ -19,7 +19,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('menu') menu: ElementRef;
   @ViewChild('deletePointMenu') deletePointMenu: ElementRef;
 
-  private nearShape: any;
+  private nearPoint: any;
 
   constructor(
     public dataService: DataService,
@@ -136,13 +136,13 @@ export class AppComponent implements AfterViewInit {
     // disable button by default
     this.deletePointMenu.nativeElement.disabled = true;
 
-    var nearShape = this.pointService.getNearShape(
+    var nearPoint = this.pointService.getNearPoint(
       this.shapeService.shapes,
       e.evt
     );
 
-    if (nearShape != null) {
-      this.nearShape = nearShape;
+    if (nearPoint != null) {
+      this.nearPoint = nearPoint;
       this.deletePointMenu.nativeElement.disabled = false;
     }
   }
@@ -209,7 +209,7 @@ export class AppComponent implements AfterViewInit {
    * @param event
    */
   public contextMenuDeletePoint(event: any) {
-    if (!this.nearShape) {
+    if (!this.nearPoint) {
       // shouldn't be possible to click delete without near point but check it just in case
       return;
     }
