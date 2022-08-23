@@ -54,7 +54,7 @@ export class AppComponent implements AfterViewInit {
    */
   private handleMouseUpEvent(e: any) {
     // hide context menu after any click on the stage
-    this.menu.nativeElement.style.display = 'none';
+    this.hideContextMenu();
 
     if (this.shapeService.isDragAction) {
       // part of drag action - ignore this click
@@ -203,18 +203,38 @@ export class AppComponent implements AfterViewInit {
     this.layerService.setBackgroundOffset(offsets[0], offsets[1]);
   }
 
-  // TODO docs
+  // TODO context menu probably should be a separate component
+  /**
+   * Handle interaction with delete point from context menu.
+   * @param event
+   */
   public contextMenuDeletePoint(event: any) {
-    //TODO
+    if (!this.nearPoint) {
+      // shouldn't be possible to click delete without near point but check it just in case
+      return;
+    }
+
+    console.log('TODO deleting the point now: ', event);
+    this.hideContextMenu();
   }
 
-  // TODO docs
+  /**
+   * Handle interaction with cancel current action from context menu.
+   * @param event
+   */
   public contextMenuCancelCurrentAction(event: any) {
-    //TODO
+    // TODO
   }
 
-  // TODO docs
+  /**
+   * Handle interaction with close menu from context menu.
+   * @param event
+   */
   public contextMenuCloseMenuAction(event: any) {
+    this.hideContextMenu();
+  }
+
+  private hideContextMenu() {
     this.menu.nativeElement.style.display = 'none';
   }
 }
