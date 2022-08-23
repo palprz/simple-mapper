@@ -16,9 +16,9 @@ export class PointService {
    * Check if coordinates from the event are close to any point from stored shapes.
    * @param shapes stored shapes to search any point
    * @param event contains X and Y coordinates
-   * @returns found the first point which is near provided coordinates
+   * @returns found the first shape which has point near provided coordinates
    */
-  public getNearPoint(shapes: any, event: any) {
+  public getNearShape(shapes: any, event: any) {
     if (shapes.length === 0) {
       // it's a first point on the layer so defo not near any other point
       return null;
