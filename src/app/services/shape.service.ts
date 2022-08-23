@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { v4 as uuidv4 } from 'uuid';
+import { NearPoint } from '../models/near-point.model';
 
 import { Point } from '../models/point.model';
 import { Shape } from '../models/shape.model';
@@ -99,7 +100,7 @@ export class ShapeService {
    * @param shape shape to store
    */
   public saveShape(shape: Konva.Line) {
-    this.removeShapeFromStoredList(shape);
+    this.removeShapeFromStoredList(shape.attrs['id']);
 
     this.shapes.push(
       new Shape(
@@ -114,9 +115,39 @@ export class ShapeService {
     console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
   }
 
+  /**
+   * Remove point from the shape. If shape after that will have only 1 point, fully remove the shape (from layer and stored list).
+   * @param nearPoint contains near point and shape related to it
+   */
+  public removePointFromShape(nearPoint: NearPoint) {
+    this.removeCoordsFromShape(nearPoint.shape, nearPoint.point);
+
+    // remove shapes with 1 or less (somehow) points
+    if (nearPoint.shape.points.length <= 2) {
+      this.layerService.destroyShape(nearPoint.shape);
+      this.removeShapeFromStoredList(nearPoint.shape.id);
+    }
+  }
+
+  /**
+   * Remove coordinates from provided shape.
+   * @param shape to be modified
+   * @param point contains X and Y coordinates to be removed from shape
+   * @returns
+   */
+  public removeCoordsFromShape(shape: Shape, point: Point) {
+    var coords = shape.points;
+    for (var i = 0; coords.length > i; i++) {
+      if (point.x === coords[i] && point.y === coords[i + 1]) {
+        coords.splice(i, 2);
+        return;
+      }
+    }
+  }
+
   //TODO docs
-  private removeShapeFromStoredList(shape: Konva.Line) {
-    var index = this.shapes.findIndex((el) => el.id == shape.attrs['id']);
+  private removeShapeFromStoredList(shapeID: string) {
+    var index = this.shapes.findIndex((el) => el.id == shapeID);
     console.log('index', index);
     if (index > -1) {
       this.shapes.splice(index, 1);
@@ -171,7 +202,7 @@ export class ShapeService {
     shape.attrs['stroke'] = 'red';
     this.shape = shape;
     this.pointService.lastPoint = this.getLastPointFromShape(this.shape);
-    this.removeShapeFromStoredList(shape);
+    this.removeShapeFromStoredList(shape.attrs['id']);
   }
 
   /**

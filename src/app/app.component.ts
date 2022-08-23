@@ -83,6 +83,7 @@ export class AppComponent implements AfterViewInit {
         this.pointService.isNearLastPoint(this.shapeService.shape, e.evt)
       ) {
         // clicked same point - finish shape
+        // TODO BUG cannot finish when moved the shape
         this.shapeService.finishLine();
         this.updateCounters();
       } else {
@@ -214,7 +215,12 @@ export class AppComponent implements AfterViewInit {
       return;
     }
 
-    console.log('TODO deleting the point now: ', event);
+    // TODO deleting single point from the polygon -> changing to be just a line
+    // make sure it is saved properly in the json at the end
+    this.shapeService.removePointFromShape(this.nearPoint);
+
+    this.layerService.draw();
+    this.updateCounters();
     this.hideContextMenu();
   }
 

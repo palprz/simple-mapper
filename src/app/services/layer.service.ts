@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import { Stage } from 'konva/lib/Stage';
+import { Shape } from '../models/shape.model';
 
 @Injectable({ providedIn: 'root' })
 export class LayerService {
@@ -76,6 +77,21 @@ export class LayerService {
 
   get stageContainer() {
     return this._stage.container().getBoundingClientRect();
+  }
+
+  /**
+   * Destroy the shape from the layer, so it will dissapear from the stage and will not cause memory leak.
+   * @param shape to be removed from the layer
+   * @returns
+   */
+  public destroyShape(shape: Shape) {
+    var children = this.layer.getChildren();
+    for (var i = 0; children.length > i; i++) {
+      if (children[i].attrs['id'] == shape.id) {
+        children[i].destroy();
+        return;
+      }
+    }
   }
 
   /**
