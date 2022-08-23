@@ -145,10 +145,12 @@ export class ShapeService {
     }
   }
 
-  //TODO docs
+  /**
+   * Remove shape from stored list.
+   * @param shapeID the ID of related shape to delete
+   */
   private removeShapeFromStoredList(shapeID: string) {
     var index = this.shapes.findIndex((el) => el.id == shapeID);
-    console.log('index', index);
     if (index > -1) {
       this.shapes.splice(index, 1);
     }

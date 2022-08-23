@@ -184,7 +184,11 @@ export class AppComponent implements AfterViewInit {
     };
   }
 
-  // TODO docs
+  /**
+   * Handle event with uploading the background for stage.
+   * @param event
+   * @returns
+   */
   public uploadStageBackground(event: any) {
     if (event.target.files.length == 0) {
       // no file to upload - ignore event
@@ -198,13 +202,15 @@ export class AppComponent implements AfterViewInit {
   }
 
   // TODO temporarily to check if offset is added properly
-  // TODO docs
+  /**
+   * Add offset to the background so it can be moved without moving whole stage.
+   * @param event contains X and Y for offset
+   */
   public setBackgroundOffset(event: any) {
     var offsets = event.target.value.split(',', 2);
     this.layerService.setBackgroundOffset(offsets[0], offsets[1]);
   }
 
-  // TODO context menu probably should be a separate component
   /**
    * Handle interaction with delete point from context menu.
    * @param event
@@ -222,14 +228,6 @@ export class AppComponent implements AfterViewInit {
     this.layerService.draw();
     this.updateCounters();
     this.hideContextMenu();
-  }
-
-  /**
-   * Handle interaction with cancel current action from context menu.
-   * @param event
-   */
-  public contextMenuCancelCurrentAction(event: any) {
-    // TODO
   }
 
   /**
