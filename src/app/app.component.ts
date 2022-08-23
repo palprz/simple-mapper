@@ -15,7 +15,11 @@ import { StoreData } from './models/store-data.model';
 export class AppComponent implements AfterViewInit {
   @ViewChild('pointCounter') pointCounter: ElementRef;
   @ViewChild('shapeCounter') shapeCounter: ElementRef;
+
   @ViewChild('menu') menu: ElementRef;
+  @ViewChild('deletePointMenu') deletePointMenu: ElementRef;
+
+  private nearPoint: any;
 
   constructor(
     public dataService: DataService,
@@ -40,7 +44,7 @@ export class AppComponent implements AfterViewInit {
 
     this.layerService.stage.on('contextmenu', (e) => {
       e.evt.preventDefault();
-      this.displayContextMenu();
+      this.displayContextMenu(e);
     });
   }
 
@@ -113,16 +117,33 @@ export class AppComponent implements AfterViewInit {
   /**
    * Display context menu next to the pointer.
    */
-  private displayContextMenu() {
+  // TODO probbaly this should change the name
+  private displayContextMenu(e: any) {
     var pointerCoords = this.layerService.stage.getPointerPosition();
-    // this shouldn't be possible but check just in case
-    if (pointerCoords !== null) {
-      var menuStyle = this.menu.nativeElement.style;
-      menuStyle.display = 'initial';
-      menuStyle.top =
-        this.layerService.stageContainer.top + pointerCoords.y + 'px';
-      menuStyle.left =
-        this.layerService.stageContainer.left + pointerCoords.x + 'px';
+    if (!pointerCoords) {
+      // this shouldn't be possible but return just in case
+      return;
+    }
+
+    // display context menu
+    var menuStyle = this.menu.nativeElement.style;
+    menuStyle.display = 'initial';
+    menuStyle.top =
+      this.layerService.stageContainer.top + pointerCoords.y + 'px';
+    menuStyle.left =
+      this.layerService.stageContainer.left + pointerCoords.x + 'px';
+
+    // disable button by default
+    this.deletePointMenu.nativeElement.disabled = true;
+
+    var nearPoint = this.pointService.getNearPoint(
+      this.shapeService.shapes,
+      e.evt
+    );
+
+    if (nearPoint != null) {
+      this.nearPoint = nearPoint;
+      this.deletePointMenu.nativeElement.disabled = false;
     }
   }
 

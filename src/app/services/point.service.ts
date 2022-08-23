@@ -13,6 +13,37 @@ export class PointService {
   }
 
   /**
+   * Check if coordinates from the event are close to any point from stored shapes.
+   * @param shapes stored shapes to search any point
+   * @param event contains X and Y coordinates
+   * @returns found the first point which is near provided coordinates
+   */
+  public getNearPoint(shapes: any, event: any) {
+    if (shapes.length === 0) {
+      // it's a first point on the layer so defo not near any other point
+      return null;
+    }
+
+    for (var i = 0; shapes.length > i; i++) {
+      var pointsCoords = shapes[i].points;
+      for (var j = 0; pointsCoords.length > j; j = j + 2) {
+        if (
+          this.isNear(
+            pointsCoords[j],
+            pointsCoords[j + 1],
+            event.offsetX,
+            event.offsetY
+          )
+        ) {
+          return shapes[i];
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Check if coordinates from the event are close to the first point of the shape.
    * @param shape contains point which will be the main point to check
    * @param event contains coordinates of X and Y which will tell where is mouse
@@ -33,9 +64,6 @@ export class PointService {
   }
 
   private isNearPoint(shape: any, event: any, whichPoint: string) {
-    // pixels of the margin to detect interaction with the point
-    var margin = 10;
-
     var x1, y1;
     switch (whichPoint) {
       case 'first': {
@@ -57,6 +85,12 @@ export class PointService {
 
     var x2 = event.offsetX;
     var y2 = event.offsetY;
+    return this.isNear(x1, y1, x2, y2);
+  }
+
+  private isNear(x1: number, y1: number, x2: number, y2: number) {
+    // pixels of the margin to detect interaction with the point
+    var margin = 10;
     return (
       x1 < x2 + margin &&
       x1 > x2 - margin &&

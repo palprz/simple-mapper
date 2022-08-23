@@ -22,6 +22,7 @@ TODO update this readme
 ## TODO ideas how to improve the tool:
 
 - modify (remove point) existing line (maybe with using context menu even without selecting the shape?) https://konvajs.org/docs/performance/Avoid_Memory_Leaks.html
+- delete line if it's just a single point
 - adding text (by context menu): https://konvajs.org/docs/shapes/Text.html
 - able to change line to be polygon
 - able to change polygon to be line
