@@ -1,24 +1,11 @@
 export class Shape {
   public id: string;
   public type: string;
-  public points: number[];
-  public fill: any;
-  public offsetX: any;
-  public offsetY: any;
+  public attrs: any;
 
-  constructor(
-    id: string,
-    type: string,
-    points: number[],
-    fill: any,
-    offsetX: number,
-    offsetY: number
-  ) {
+  constructor(id: string, type: string, attrs: any) {
     this.id = id;
     this.type = type;
-    this.points = points;
-    this.fill = fill ? fill : undefined;
-    this.offsetX = offsetX ? offsetX : undefined;
-    this.offsetY = offsetY ? offsetY : undefined;
+    this.attrs = attrs;
   }
 }

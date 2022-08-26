@@ -29,12 +29,18 @@ export class ShapeService {
     this.layerService.addShape(this.shape);
   }
 
+  private uploadText(newText: any) {
+    console.log('UPLOAD the text');
+    var uploadedText = this.createNewText(newText);
+    this.layerService.addShape(uploadedText);
+  }
+
   /**
    * Add new Line based on provided input.
    * @param newLine contains points to define new Line.
    */
   private uploadLine(newLine: any) {
-    console.log('UPLOAD the line');
+    console.log('UPLOAD the line/polygon');
     var uploadedLine = this.createNewLine(newLine);
     this.layerService.addShape(uploadedLine);
   }
@@ -77,6 +83,7 @@ export class ShapeService {
    */
   public createText(text: string, menuClickPoint: Point) {
     this.shape = new Konva.Text({
+      id: uuidv4(),
       x: menuClickPoint.x,
       y: menuClickPoint.y,
       text: text,
@@ -86,30 +93,52 @@ export class ShapeService {
     this.shape.draggable(true);
 
     this.layerService.addShape(this.shape);
+    this.saveShape(this.shape);
     return this.shape;
   }
 
   /**
-   * Create the shape (based on the basic shape) with provided details.
+   * Create the text shape with provided details.
    * @param storedData data used to create new line
    * @returns
    */
-  public createNewLine(storedData: Shape) {
+  private createNewText(storedData: Shape) {
+    var newText = new Konva.Text({
+      id: storedData.attrs['id'],
+      x: storedData.attrs['x'],
+      y: storedData.attrs['y'],
+      text: storedData.attrs['text'],
+      fontSize: storedData.attrs['fontSize'],
+      fontFamily: storedData.attrs['fontFamily'],
+    });
+    newText.draggable(true);
+
+    // TODO is this working so far till here?
+    return newText;
+  }
+
+  /**
+   * Create the line/polygon shape (based on the basic shape) with provided details.
+   * @param storedData data used to create new line
+   * @returns
+   */
+  private createNewLine(storedData: Shape) {
+    // TODO deeply verify if these bits are correct
     var line = this.createBasicNewLine();
-    line.attrs['points'] = [...storedData.points];
+    line.attrs['points'] = [...storedData.attrs['points']];
     line.attrs['stroke'] = 'black';
 
-    if (storedData.offsetX) {
-      line.attrs['x'] = storedData.offsetX;
+    if (storedData.attrs['offsetX']) {
+      line.attrs['x'] = storedData.attrs['offsetX'];
     }
 
-    if (storedData.offsetY) {
-      line.attrs['y'] = storedData.offsetY;
+    if (storedData.attrs['offsetY']) {
+      line.attrs['y'] = storedData.attrs['offsetY'];
     }
 
-    if (storedData.type === 'polygon') {
+    if (storedData.attrs['type'] === 'polygon') {
       line.attrs['closed'] = 'true';
-      line.attrs['fill'] = storedData.fill;
+      line.attrs['fill'] = storedData.attrs['fill'];
     }
 
     return line;
@@ -119,20 +148,21 @@ export class ShapeService {
    * Store finished shape with rest shapes.
    * @param shape shape to store
    */
-  public saveShape(shape: Konva.Line) {
+  public saveShape(shape: Konva.Shape) {
     this.removeShapeFromStoredList(shape.attrs['id']);
 
-    this.shapes.push(
-      new Shape(
-        shape.attrs['id'],
-        shape.attrs['closed'] === 'true' ? 'polygon' : 'line',
-        shape.attrs['points'],
-        shape.attrs['fill'],
-        shape.attrs['x'],
-        shape.attrs['y']
-      )
-    );
-    console.log('SAVING shape', this.shapes[this.shapes.length - 1]);
+    if (shape instanceof Konva.Text) {
+      this.shapes.push(new Shape(shape.attrs['id'], 'text', shape.attrs));
+    } else {
+      this.shapes.push(
+        new Shape(
+          shape.attrs['id'],
+          shape.attrs['closed'] === 'true' ? 'polygon' : 'line',
+          shape.attrs
+        )
+      );
+    }
+    console.log('SAVED shape', this.shapes[this.shapes.length - 1]);
   }
 
   /**
@@ -143,7 +173,7 @@ export class ShapeService {
     this.removeCoordsFromShape(nearPoint.shape, nearPoint.point);
 
     // remove shapes with 1 or less (somehow) points
-    if (nearPoint.shape.points.length <= 2) {
+    if (nearPoint.shape.attrs['points'].length <= 2) {
       this.layerService.destroyShape(nearPoint.shape);
       this.removeShapeFromStoredList(nearPoint.shape.id);
     }
@@ -156,7 +186,7 @@ export class ShapeService {
    * @returns
    */
   public removeCoordsFromShape(shape: Shape, point: Point) {
-    var coords = shape.points;
+    var coords = shape.attrs['points'];
     for (var i = 0; coords.length > i; i++) {
       if (point.x === coords[i] && point.y === coords[i + 1]) {
         coords.splice(i, 2);
@@ -264,9 +294,10 @@ export class ShapeService {
    */
   public getPointsNumber() {
     var pointsLength = 0;
-    this.shapes.forEach(
-      (el) => (pointsLength = el.points.length + pointsLength)
-    );
+    // TODO remove fully these numbers
+    // this.shapes.forEach(
+    //   (el) => (pointsLength = el.attrs['points']?.length + pointsLength)
+    // );
     return pointsLength / 2;
   }
 
@@ -308,7 +339,11 @@ export class ShapeService {
     this.layerService.clear();
 
     for (var i = 0; newShapes.length > i; i++) {
-      this.uploadLine(newShapes[i]);
+      if (newShapes[i].type === 'text') {
+        this.uploadText(newShapes[i]);
+      } else {
+        this.uploadLine(newShapes[i]);
+      }
     }
 
     this.shapes = newShapes;

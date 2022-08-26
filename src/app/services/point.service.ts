@@ -27,7 +27,7 @@ export class PointService {
     }
 
     for (var i = 0; shapes.length > i; i++) {
-      var pointsCoords = shapes[i].points;
+      var pointsCoords = shapes[i].attrs['points'];
       for (var j = 0; pointsCoords.length > j; j = j + 2) {
         if (
           this.isNear(
@@ -40,13 +40,18 @@ export class PointService {
           var nearShape = shapes[i];
           return new NearPoint(
             nearShape,
-            new Point(nearShape.points[j], nearShape.points[j + 1])
+            new Point(nearShape.attrs['points'][j], nearShape.attrs['points'][j + 1])
           );
         }
       }
     }
 
     return null;
+  }
+
+  // TODO docs
+  public getNearText(shapes: any, event: any) {
+    // TODO
   }
 
   /**

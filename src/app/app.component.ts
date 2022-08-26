@@ -18,8 +18,10 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('menu') menu: ElementRef;
   @ViewChild('deletePointMenu') deletePointMenu: ElementRef;
+  @ViewChild('deleteTextMenu') deleteTextMenu: ElementRef;
 
   private nearPoint: any;
+  private nearText: any;
   private menuClickPoint: any;
 
   constructor(
@@ -59,6 +61,7 @@ export class AppComponent implements AfterViewInit {
     this.hideContextMenu();
     // clear context menu related values
     this.nearPoint = undefined;
+    this.nearText = undefined;
     this.menuClickPoint = undefined;
 
     if (this.shapeService.isDragAction) {
@@ -141,8 +144,10 @@ export class AppComponent implements AfterViewInit {
 
     // disable button by default
     this.deletePointMenu.nativeElement.disabled = true;
+    this.deleteTextMenu.nativeElement.disabled = true;
 
     this.menuClickPoint = new Point(e.evt.offsetX, e.evt.offsetY);
+    // TODO separate method for nearPoint
     var nearPoint = this.pointService.getNearPoint(
       this.shapeService.shapes,
       e.evt
@@ -151,6 +156,17 @@ export class AppComponent implements AfterViewInit {
     if (nearPoint != null) {
       this.nearPoint = nearPoint;
       this.deletePointMenu.nativeElement.disabled = false;
+    }
+
+    // TODO separate method for nearText
+    var nearText = this.pointService.getNearText(
+      this.shapeService.shapes,
+      e.evt
+    );
+    // TODO do I need to check if it's not null?
+    if (nearText != null) {
+      this.nearText = nearText;
+      this.deleteTextMenu.nativeElement.disabled = false;
     }
   }
 
@@ -242,6 +258,11 @@ export class AppComponent implements AfterViewInit {
     this.layerService.draw();
     this.updateCounters();
     this.hideContextMenu();
+  }
+
+  // TODO docs
+  public contextMenuDeleteText(event: any) {
+    console.log('clicked contextMenuDeleteText');
   }
 
   /**
