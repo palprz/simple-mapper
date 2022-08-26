@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import { Line } from 'konva/lib/shapes/Line';
 import { v4 as uuidv4 } from 'uuid';
-import { NearPoint } from '../models/near-point.model';
+import { Near } from '../models/near-point.model';
 
 import { Point } from '../models/point.model';
 import { Shape } from '../models/shape.model';
@@ -113,16 +113,25 @@ export class ShapeService {
 
   /**
    * Remove point from the shape. If shape after that will have only 1 point, fully remove the shape (from layer and stored list).
-   * @param nearPoint contains near point and shape related to it
+   * @param near contains near point and shape
    */
-  public removePointFromShape(nearPoint: NearPoint) {
-    this.removeCoordsFromShape(nearPoint.shape, nearPoint.point);
+  public removePointFromShape(near: Near) {
+    this.removeCoordsFromShape(near.shape, near.point);
 
     // remove shapes with 1 or less (somehow) points
-    if (nearPoint.shape.attrs['points'].length <= 2) {
-      this.layerService.destroyShape(nearPoint.shape);
-      this.removeShapeFromStoredList(nearPoint.shape.id);
+    if (near.shape.attrs['points'].length <= 2) {
+      this.layerService.destroyShape(near.shape);
+      this.removeShapeFromStoredList(near.shape.attrs['id']);
     }
+  }
+
+  /**
+   * Remove text from the layer and stored list.
+   * @param near contains shape
+   */
+  public removeText(near: Near) {
+    this.layerService.destroyShape(near.shape);
+    this.removeShapeFromStoredList(near.shape.attrs['id']);
   }
 
   /**
@@ -146,7 +155,7 @@ export class ShapeService {
    * @param shapeID the ID of related shape to delete
    */
   private removeShapeFromStoredList(shapeID: string) {
-    var index = this.shapes.findIndex((el) => el.id == shapeID);
+    var index = this.shapes.findIndex((el) => el.attrs['id'] == shapeID);
     if (index > -1) {
       this.shapes.splice(index, 1);
     }

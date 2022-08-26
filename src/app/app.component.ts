@@ -144,7 +144,7 @@ export class AppComponent implements AfterViewInit {
       e.evt
     );
 
-    if (nearPoint != null) {
+    if (nearPoint) {
       this.nearPoint = nearPoint;
       this.deletePointMenu.nativeElement.disabled = false;
     }
@@ -154,8 +154,7 @@ export class AppComponent implements AfterViewInit {
       this.shapeService.shapes,
       e.evt
     );
-    // TODO do I need to check if it's not null?
-    if (nearText != null) {
+    if (nearText) {
       this.nearText = nearText;
       this.deleteTextMenu.nativeElement.disabled = false;
     }
@@ -230,7 +229,7 @@ export class AppComponent implements AfterViewInit {
    */
   public contextMenuDeletePoint(event: any) {
     if (!this.nearPoint) {
-      // shouldn't be possible to click delete without near point but check it just in case
+      // not properly setup data
       return;
     }
 
@@ -242,9 +241,20 @@ export class AppComponent implements AfterViewInit {
     this.hideContextMenu();
   }
 
-  // TODO docs
+  /**
+   * Handle interaction with delete text from context menu.
+   * @param event
+   */
   public contextMenuDeleteText(event: any) {
-    console.log('clicked contextMenuDeleteText');
+    if (!this.nearText) {
+      // not properly setup data
+      return;
+    }
+
+    this.shapeService.removeText(this.nearText);
+
+    this.layerService.draw();
+    this.hideContextMenu();
   }
 
   /**

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NearPoint } from '../models/near-point.model';
+import { Near } from '../models/near-point.model';
 import { Point } from '../models/point.model';
 
 @Injectable({ providedIn: 'root' })
@@ -21,17 +21,12 @@ export class PointService {
    * @returns found the first point which is near provided coordinates
    */
   public getNearPoint(shapes: any, event: any) {
-    if (shapes.length === 0) {
-      // it's a first point on the layer so defo not near any other point
-      return null;
-    }
-
     for (var i = 0; shapes.length > i; i++) {
       if (shapes[i].type === 'text') {
         // not a line/polygon so skip it
-        break;
+        continue;
       }
-      
+
       var pointsCoords = shapes[i].attrs['points'];
       for (var j = 0; pointsCoords.length > j; j = j + 2) {
         if (
@@ -42,12 +37,11 @@ export class PointService {
             event.offsetY
           )
         ) {
-          var nearShape = shapes[i];
-          return new NearPoint(
-            nearShape,
+          return new Near(
+            shapes[i],
             new Point(
-              nearShape.attrs['points'][j],
-              nearShape.attrs['points'][j + 1]
+              shapes[i].attrs['points'][j],
+              shapes[i].attrs['points'][j + 1]
             )
           );
         }
@@ -57,9 +51,37 @@ export class PointService {
     return null;
   }
 
-  // TODO docs
+  /**
+   * Check if coordinates from the event are close to any text from stored shapes.
+   * @param shapes stored shapes to search any text
+   * @param event contains X and Y coordinates
+   * @returns found the first text which is near provided coordinates
+   */
   public getNearText(shapes: any, event: any) {
-    // TODO
+    for (var i = 0; shapes.length > i; i++) {
+      if (shapes[i].type !== 'text') {
+        // a line/polygon so skip it
+        continue;
+      }
+
+      if (
+        this.isNear(
+          shapes[i].attrs['x'],
+          shapes[i].attrs['y'],
+          event.offsetX,
+          event.offsetY,
+          50
+        )
+      ) {
+        return new Near(
+          shapes[i],
+          // this isn't needed to add just in case for the future
+          new Point(shapes[i].attrs['x'], shapes[i].attrs['y'])
+        );
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -107,9 +129,7 @@ export class PointService {
     return this.isNear(x1, y1, x2, y2);
   }
 
-  private isNear(x1: number, y1: number, x2: number, y2: number) {
-    // pixels of the margin to detect interaction with the point
-    var margin = 10;
+  private isNear(x1: number, y1: number, x2: number, y2: number, margin = 10) {
     return (
       x1 < x2 + margin &&
       x1 > x2 - margin &&

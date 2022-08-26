@@ -1,7 +1,7 @@
 import { Point } from './point.model';
 import { Shape } from './shape.model';
 
-export class NearPoint {
+export class Near {
   private _shape: Shape;
   private _point: Point;
 

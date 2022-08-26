@@ -22,14 +22,14 @@ TODO update this readme
 - delete line if it's just a single point
 - able to define size of stage
 - adding text (by context menu): https://konvajs.org/docs/shapes/Text.html
-
-## TODO
-
 - delete text
 - proper download and upload text shape
 - able to change line to be polygon
-- able to change polygon to be line
 - proper upload of the text
+
+## TODO
+
+- able to change polygon to be line
 - validations for everything
 - better styling
 - optimalisation https://konvajs.org/docs/performance/Optimize_Strokes.html
