@@ -25,13 +25,24 @@ export class ShapeService {
    */
   public startLine() {
     console.log('Start the line');
-    this.shape = this.createBasicNewLine();
+    this.shape = new Konva.Line({
+      id: uuidv4(),
+      points: [],
+      stroke: 'red',
+      strokeWidth: 5,
+      lineCap: 'round',
+      lineJoin: 'round',
+      draggable: true,
+    });
+
+    this.addEventsForShape(this.shape);
     this.layerService.addShape(this.shape);
   }
 
   private uploadText(newText: any) {
     console.log('UPLOAD the text');
-    var uploadedText = this.createNewText(newText);
+    var uploadedText = new Konva.Text(newText.attrs);
+    uploadedText.draggable(true);
     this.layerService.addShape(uploadedText);
   }
 
@@ -41,7 +52,8 @@ export class ShapeService {
    */
   private uploadLine(newLine: any) {
     console.log('UPLOAD the line/polygon');
-    var uploadedLine = this.createNewLine(newLine);
+    var uploadedLine = new Konva.Line(newLine.attrs);
+    this.addEventsForShape(uploadedLine);
     this.layerService.addShape(uploadedLine);
   }
 
@@ -54,25 +66,6 @@ export class ShapeService {
     this.layerService.draw();
     this.shape.attrs['points'].pop();
     this.shape.attrs['points'].pop();
-  }
-
-  /**
-   * Create the basic shape.
-   * @returns
-   */
-  private createBasicNewLine() {
-    var line = new Konva.Line({
-      id: uuidv4(),
-      points: [],
-      stroke: 'red',
-      strokeWidth: 5,
-      lineCap: 'round',
-      lineJoin: 'round',
-      draggable: true,
-    });
-
-    this.addEventsForShape(line);
-    return line;
   }
 
   /**
@@ -95,36 +88,6 @@ export class ShapeService {
     this.layerService.addShape(this.shape);
     this.saveShape(this.shape);
     return this.shape;
-  }
-
-  /**
-   * Create the text shape with provided details.
-   * @param storedData data used to create new line
-   * @returns
-   */
-  private createNewText(storedData: Shape) {
-    var newText = new Konva.Text({
-      id: storedData.attrs['id'],
-      x: storedData.attrs['x'],
-      y: storedData.attrs['y'],
-      text: storedData.attrs['text'],
-      fontSize: storedData.attrs['fontSize'],
-      fontFamily: storedData.attrs['fontFamily'],
-    });
-    newText.draggable(true);
-
-    return newText;
-  }
-
-  /**
-   * Create the line/polygon shape (based on the basic shape) with provided details.
-   * @param storedData data used to create new line
-   * @returns
-   */
-  private createNewLine(storedData: Shape) {
-    var line = this.createBasicNewLine();
-    line.attrs = storedData.attrs;
-    return line;
   }
 
   /**
@@ -295,7 +258,7 @@ export class ShapeService {
 
   /**
    * Handle provided data and add them to the layer.
-   * @param newDatas new shapes to add
+   * @param newShapes new shapes to add
    */
   public processUpload(newShapes: any) {
     this.layerService.clear();
