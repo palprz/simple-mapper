@@ -27,6 +27,11 @@ export class PointService {
     }
 
     for (var i = 0; shapes.length > i; i++) {
+      if (shapes[i].type === 'text') {
+        // not a line/polygon so skip it
+        break;
+      }
+      
       var pointsCoords = shapes[i].attrs['points'];
       for (var j = 0; pointsCoords.length > j; j = j + 2) {
         if (
@@ -40,7 +45,10 @@ export class PointService {
           var nearShape = shapes[i];
           return new NearPoint(
             nearShape,
-            new Point(nearShape.attrs['points'][j], nearShape.attrs['points'][j + 1])
+            new Point(
+              nearShape.attrs['points'][j],
+              nearShape.attrs['points'][j + 1]
+            )
           );
         }
       }

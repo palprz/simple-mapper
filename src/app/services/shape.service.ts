@@ -113,7 +113,6 @@ export class ShapeService {
     });
     newText.draggable(true);
 
-    // TODO is this working so far till here?
     return newText;
   }
 
@@ -123,24 +122,8 @@ export class ShapeService {
    * @returns
    */
   private createNewLine(storedData: Shape) {
-    // TODO deeply verify if these bits are correct
     var line = this.createBasicNewLine();
-    line.attrs['points'] = [...storedData.attrs['points']];
-    line.attrs['stroke'] = 'black';
-
-    if (storedData.attrs['offsetX']) {
-      line.attrs['x'] = storedData.attrs['offsetX'];
-    }
-
-    if (storedData.attrs['offsetY']) {
-      line.attrs['y'] = storedData.attrs['offsetY'];
-    }
-
-    if (storedData.attrs['type'] === 'polygon') {
-      line.attrs['closed'] = 'true';
-      line.attrs['fill'] = storedData.attrs['fill'];
-    }
-
+    line.attrs = storedData.attrs;
     return line;
   }
 
