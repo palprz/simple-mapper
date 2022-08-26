@@ -70,6 +70,26 @@ export class ShapeService {
   }
 
   /**
+   * Create text shape.
+   * @param text value to be displayed as a text
+   * @param menuClickPoint contains coordinates where the text should be added to the layer
+   * @returns
+   */
+  public createText(text: string, menuClickPoint: Point) {
+    this.shape = new Konva.Text({
+      x: menuClickPoint.x,
+      y: menuClickPoint.y,
+      text: text,
+      fontSize: 18,
+      fontFamily: 'Calibri',
+    });
+    this.shape.draggable(true);
+
+    this.layerService.addShape(this.shape);
+    return this.shape;
+  }
+
+  /**
    * Create the shape (based on the basic shape) with provided details.
    * @param storedData data used to create new line
    * @returns

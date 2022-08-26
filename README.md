@@ -18,29 +18,35 @@ TODO update this readme
 - saving stage as a part of config
 - add default size of the stage (configurable)
 - finish by clicking same point (around 10 px margin)
-
-## TODO ideas how to improve the tool:
-
 - modify (remove point) existing line (maybe with using context menu even without selecting the shape?) https://konvajs.org/docs/performance/Avoid_Memory_Leaks.html
 - delete line if it's just a single point
+- able to define size of stage
 - adding text (by context menu): https://konvajs.org/docs/shapes/Text.html
+
+## TODO
+
+- delete text
+- proper download and upload text shape
 - able to change line to be polygon
 - able to change polygon to be line
-- scale shapes https://konvajs.org/docs/select_and_transform/Resize_Snaps.html
+- proper upload of the text
 - validations for everything
-- able to define size of stage
 - better styling
 - optimalisation https://konvajs.org/docs/performance/Optimize_Strokes.html
 - add description for each option
 - list with possible actions for the simpler-mapper
 - add tooltip with description what exactly it's doing
+- deep testing of every function
 - (?) CTRL + Z and/or shortcuts
 - (?) preset
 - (?) split shapes
 - (?) duplicate shapes
 - (?) possible to draw straight lines (prox calculation for the X or Y)
+- (?) add opacity
 - (?) rotate shapes https://konvajs.org/docs/animations/Rotation.html
-- (?) pressing mouse -> creating rect
+- (?) scale shapes https://konvajs.org/docs/select_and_transform/Resize_Snaps.html
+- (?) pressing and hold mouse -> creating rect
+- (?) change size and colour of the added text
 - create a demo object
-- move to Heroku
+- screenshots of running app (bye bye Heroku)
 - update this README

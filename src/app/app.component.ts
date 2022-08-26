@@ -20,6 +20,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('deletePointMenu') deletePointMenu: ElementRef;
 
   private nearPoint: any;
+  private menuClickPoint: any;
 
   constructor(
     public dataService: DataService,
@@ -52,9 +53,13 @@ export class AppComponent implements AfterViewInit {
    * Handle all 'mouseup' events.
    * @param e event
    */
+  // TODO broken interaction with text shape
   private handleMouseUpEvent(e: any) {
     // hide context menu after any click on the stage
     this.hideContextMenu();
+    // clear context menu related values
+    this.nearPoint = undefined;
+    this.menuClickPoint = undefined;
 
     if (this.shapeService.isDragAction) {
       // part of drag action - ignore this click
@@ -137,6 +142,7 @@ export class AppComponent implements AfterViewInit {
     // disable button by default
     this.deletePointMenu.nativeElement.disabled = true;
 
+    this.menuClickPoint = new Point(e.evt.offsetX, e.evt.offsetY);
     var nearPoint = this.pointService.getNearPoint(
       this.shapeService.shapes,
       e.evt
@@ -201,14 +207,22 @@ export class AppComponent implements AfterViewInit {
     };
   }
 
-  // TODO temporarily to check if offset is added properly
   /**
    * Add offset to the background so it can be moved without moving whole stage.
    * @param event contains X and Y for offset
    */
-  public setBackgroundOffset(event: any) {
+  public handleBackgroundOffsetChange(event: any) {
     var offsets = event.target.value.split(',', 2);
     this.layerService.setBackgroundOffset(offsets[0], offsets[1]);
+  }
+
+  /**
+   * Setup the size of the stage.
+   * @param event contains X and Y for offset
+   */
+  public handleStageSizeChange(event: any) {
+    var size = event.target.value.split(',', 2);
+    this.layerService.setStageSize(size[0], size[1]);
   }
 
   /**
@@ -228,6 +242,22 @@ export class AppComponent implements AfterViewInit {
     this.layerService.draw();
     this.updateCounters();
     this.hideContextMenu();
+  }
+
+  /**
+   * Handle interaction with add text from context menu.
+   * @param event
+   * @returns
+   */
+  public contextMenuAddText(event: any) {
+    this.hideContextMenu();
+    var input = prompt('Please enter the text');
+    if (input == null || input == '') {
+      // cover also cancel action
+      return;
+    }
+
+    this.shapeService.createText(input, this.menuClickPoint);
   }
 
   /**

@@ -4,13 +4,15 @@
 <button (click)="download()">Download data</button>
 <label>Upload data:</label><input type="file" (change)="handleUploadedFile($event)" />
 <label>Upload background:</label><input type="file" (change)="uploadStageBackground($event)" />
-<label>Background offset:</label><input type="text" (change)="setBackgroundOffset($event)" />
+<label>Background offset:</label><input type="text" (change)="handleBackgroundOffsetChange($event)" />
+<label>Size of canvas:</label><input type="text" (change)="handleStageSizeChange($event)" />
 
 
 <div id="canvas-container"></div>
 <div id="menu" #menu>
     <div>
         <button id="delete-point-btn" (click)="contextMenuDeletePoint($event)" #deletePointMenu>Delete point</button>
+        <button id="add-text-btn" (click)="contextMenuAddText($event)">Add text</button>
         <button id="close-btn" (click)="contextMenuCloseMenuAction($event)">Close menu</button>
     </div>
 </div>

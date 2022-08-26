@@ -9,8 +9,6 @@ export class LayerService {
   private _stage: Stage;
 
   /**
-   * @returns created stage
-   */
   /**
    * Create the stage and save the created layer to the class field.
    * @param stageX the width of the new stage
@@ -23,16 +21,24 @@ export class LayerService {
       height: stageY,
     });
 
-    // add CSS based on provided X and Y
-    var container = document.getElementById('canvas-container');
-    if (container != undefined) {
-      container.style.width = stageX + 'px';
-      container.style.height = stageY + 'px';
-    }
+    this.updateContainerSize(stageX, stageY);
 
     this._layer = new Konva.Layer();
     stage.add(this.layer);
     this.stage = stage;
+  }
+
+  /**
+   * Update CSS for the stage container.
+   * @param width
+   * @param height
+   */
+  private updateContainerSize(width: any, height: any) {
+    var container = document.getElementById('canvas-container');
+    if (container != undefined) {
+      container.style.width = width + 'px';
+      container.style.height = height + 'px';
+    }
   }
 
   /**
@@ -49,14 +55,27 @@ export class LayerService {
     this.stage.container().style.background = 'url(' + imgURL + ')';
     this.stage.container().style.backgroundSize = 'cover';
     this.stage.container().style.backgroundRepeat = 'no-repeat';
-    // TODO add opacity - this isn't working because it's affecting everything, not: just a background
-    this.stage.container().style.opacity = '0.2';
   }
 
-  // TODO docs
+  /**
+   * Set background offset.
+   * @param offsetX
+   * @param offsetY
+   */
   public setBackgroundOffset(offsetX: any, offsetY: any) {
     this.stage.container().style.backgroundPositionX = '' + offsetX + 'px';
     this.stage.container().style.backgroundPositionY = '' + offsetY + 'px';
+  }
+
+  /**
+   * Set size of the stage.
+   * @param width
+   * @param height
+   */
+  public setStageSize(width: any, height: any) {
+    this.stage.width(width);
+    this.stage.height(height);
+    this.updateContainerSize(width, height);
   }
 
   /**
