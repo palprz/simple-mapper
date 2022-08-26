@@ -117,7 +117,6 @@ export class AppComponent implements AfterViewInit {
   /**
    * Display context menu next to the pointer.
    */
-  // TODO probbaly this should change the name
   private displayContextMenu(e: any) {
     var pointerCoords = this.layerService.stage.getPointerPosition();
     if (!pointerCoords) {
@@ -126,33 +125,45 @@ export class AppComponent implements AfterViewInit {
     }
 
     // display context menu
+    var stageContainer = this.layerService.stageContainer;
     var menuStyle = this.menu.nativeElement.style;
     menuStyle.display = 'initial';
-    menuStyle.top =
-      this.layerService.stageContainer.top + pointerCoords.y + 'px';
-    menuStyle.left =
-      this.layerService.stageContainer.left + pointerCoords.x + 'px';
+    menuStyle.top = stageContainer.top + pointerCoords.y + 'px';
+    menuStyle.left = stageContainer.left + pointerCoords.x + 'px';
 
     // disable button by default
     this.deletePointMenu.nativeElement.disabled = true;
     this.deleteTextMenu.nativeElement.disabled = true;
 
     this.menuClickPoint = new Point(e.evt.offsetX, e.evt.offsetY);
-    // TODO separate method for nearPoint
+    this.prepareDeletePointMenu(e);
+    this.prepareDeleteTextMenu(e);
+  }
+
+  /**
+   * Try to find near point. Enable menu context if found something.
+   * @param event contains coordinates X and Y
+   */
+  private prepareDeletePointMenu(event: any) {
     var nearPoint = this.pointService.getNearPoint(
       this.shapeService.shapes,
-      e.evt
+      event.evt
     );
 
     if (nearPoint) {
       this.nearPoint = nearPoint;
       this.deletePointMenu.nativeElement.disabled = false;
     }
+  }
 
-    // TODO separate method for nearText
+  /**
+   * Try to find near text. Enable menu context if found something.
+   * @param event contains coordinates X and Y
+   */
+  private prepareDeleteTextMenu(event: any) {
     var nearText = this.pointService.getNearText(
       this.shapeService.shapes,
-      e.evt
+      event.evt
     );
     if (nearText) {
       this.nearText = nearText;
