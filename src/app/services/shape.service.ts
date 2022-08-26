@@ -289,27 +289,6 @@ export class ShapeService {
   }
 
   /**
-   * Calculate number of points on the layer based on the shapes.
-   * @returns
-   */
-  public getPointsNumber() {
-    var pointsLength = 0;
-    // TODO remove fully these numbers
-    // this.shapes.forEach(
-    //   (el) => (pointsLength = el.attrs['points']?.length + pointsLength)
-    // );
-    return pointsLength / 2;
-  }
-
-  /**
-   * Return number of shapes.
-   * @returns
-   */
-  public getShapeNumber() {
-    return this.shapes.length;
-  }
-
-  /**
    * Change cursor for the shape after mouse over it.
    * @param shape the shape which will have changed cursor
    */

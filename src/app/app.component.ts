@@ -13,9 +13,6 @@ import { StoreData } from './models/store-data.model';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild('pointCounter') pointCounter: ElementRef;
-  @ViewChild('shapeCounter') shapeCounter: ElementRef;
-
   @ViewChild('menu') menu: ElementRef;
   @ViewChild('deletePointMenu') deletePointMenu: ElementRef;
   @ViewChild('deleteTextMenu') deleteTextMenu: ElementRef;
@@ -33,8 +30,6 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.layerService.initStage();
-
-    this.updateCounters();
 
     // assign events to the stage
     this.layerService.stage.on('mouseup', (e) => {
@@ -71,7 +66,6 @@ export class AppComponent implements AfterViewInit {
 
     if (e.target instanceof Line && !this.pointService.lastPoint) {
       this.shapeService.startEditingLine(e.target);
-      this.updateCounters();
     } else {
       if (!this.shapeService.shape) {
         // start the new shape
@@ -86,18 +80,15 @@ export class AppComponent implements AfterViewInit {
         this.shapeService.addPointToLine(new Point(points[0], points[1]));
         this.shapeService.closeLine();
         this.shapeService.finishLine();
-        this.updateCounters();
       } else if (
         this.pointService.isNearLastPoint(this.shapeService.shape, e.evt)
       ) {
         // clicked same point - finish shape
         // TODO BUG cannot finish when moved the shape
         this.shapeService.finishLine();
-        this.updateCounters();
       } else {
         // extend the shape by the new point
         this.shapeService.addPointToLine(point);
-        this.updateCounters();
       }
     }
 
@@ -170,13 +161,6 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  private updateCounters() {
-    this.pointCounter.nativeElement.innerHTML =
-      this.shapeService.getPointsNumber();
-    this.shapeCounter.nativeElement.innerHTML =
-      this.shapeService.getShapeNumber();
-  }
-
   public download() {
     var datasToDownload = new StoreData(
       // remove borders from below value
@@ -202,7 +186,6 @@ export class AppComponent implements AfterViewInit {
       this.layerService.processUpload(newDatas.stageX, newDatas.stageY);
       // setup all shapes
       this.shapeService.processUpload(newDatas.shapes);
-      this.updateCounters();
     };
   }
 
@@ -256,7 +239,6 @@ export class AppComponent implements AfterViewInit {
     this.shapeService.removePointFromShape(this.nearPoint);
 
     this.layerService.draw();
-    this.updateCounters();
     this.hideContextMenu();
   }
 
