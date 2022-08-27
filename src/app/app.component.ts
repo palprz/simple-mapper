@@ -209,8 +209,8 @@ export class AppComponent implements AfterViewInit {
     fileReader.onload = () => {
       // TODO validation
       var newDatas = JSON.parse(<any>fileReader.result);
-      // set proper size of the stage
-      this.layerService.processUpload(newDatas.stageX, newDatas.stageY);
+      // set size of the stage and background for it
+      this.layerService.processUpload(newDatas.stageX, newDatas.stageY, newDatas.background);
       // setup all shapes
       this.shapeService.processUpload(newDatas.shapes);
     };
@@ -230,7 +230,7 @@ export class AppComponent implements AfterViewInit {
     var reader = new FileReader();
     reader.readAsDataURL(event.target[1].files[0]);
     reader.onload = () => {
-      this.layerService.uploadStageBackground(reader.result);
+      this.layerService.setStageBackground(reader.result);
     };
   }
 

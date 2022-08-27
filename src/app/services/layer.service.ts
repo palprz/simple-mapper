@@ -45,32 +45,38 @@ export class LayerService {
   }
 
   /**
-   * Override existing stage by the new stage with provided details of width and height.
+   * Override existing stage by the new stage with uploaded details.
    * @param stageX the width of the new stage
    * @param stageY the height of the new stage
+   * @param background the offset and data for stage's background
    */
-  public processUpload(stageX: number, stageY: number) {
+  public processUpload(stageX: number, stageY: number, background: Background) {
     this.initStage(stageX, stageY);
-  }
-
-  // TODO docs
-  public uploadStageBackground(imgURL: any) {
-    this.stage.container().style.background = 'url(' + imgURL + ')';
-    this.stage.container().style.backgroundSize = 'cover';
-    this.stage.container().style.backgroundRepeat = 'no-repeat';
-    this.background.setData(imgURL);
+    this.setStageBackground(background.data);
+    this.setBackgroundOffset(background.offsetX, background.offsetY);
   }
 
   /**
-   * Set background offset.
+   * Set background for the stage
+   * @param imgURL the data with background
+   */
+  public setStageBackground(imgURL: any) {
+    this.stage.container().style.background = 'url(' + imgURL + ')';
+    this.stage.container().style.backgroundSize = 'cover';
+    this.stage.container().style.backgroundRepeat = 'no-repeat';
+    this.background.data = imgURL;
+  }
+
+  /**
+   * Set background's offset.
    * @param offsetX
    * @param offsetY
    */
-  public setBackgroundOffset(offsetX: any, offsetY: any) {
+  public setBackgroundOffset(offsetX: number, offsetY: number) {
     this.stage.container().style.backgroundPositionX = '' + offsetX + 'px';
     this.stage.container().style.backgroundPositionY = '' + offsetY + 'px';
-    this.background.setOffsetX(offsetX);
-    this.background.setOffsetY(offsetY);
+    this.background.offsetX = offsetX;
+    this.background.offsetY = offsetY;
   }
 
   /**
