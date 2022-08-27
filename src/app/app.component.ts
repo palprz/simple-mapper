@@ -181,7 +181,9 @@ export class AppComponent implements AfterViewInit {
     // TODO
   }
 
-  // TODO docs
+  /**
+   * Download data. Includes: size of stage, shapes, background and offsets for background.
+   */
   public download() {
     var container = this.layerService.stageContainer;
     var datasToDownload = new StoreData(
@@ -263,8 +265,6 @@ export class AppComponent implements AfterViewInit {
       return;
     }
 
-    // TODO deleting single point from the polygon -> changing to be just a line
-    // make sure it is saved properly in the json at the end
     this.shapeService.removePointFromShape(this.nearPoint);
 
     this.layerService.draw();

@@ -176,18 +176,6 @@ export class ShapeService {
    */
   public closeLine() {
     this.shape.attrs['closed'] = 'true';
-    // TODO just temp colour
-    this.shape.attrs['fill'] = 'grey';
-  }
-
-  /**
-   * Open the line to remove polygon type.
-   */
-  // TODO not used and not tested
-  public openLine() {
-    this.shape.attrs['closed'] = 'false';
-    // TODO just temp colour
-    this.shape.attrs['fill'] = 'white';
   }
 
   /**

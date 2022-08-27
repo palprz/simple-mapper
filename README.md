@@ -28,15 +28,16 @@ TODO update this readme
 - proper download and upload text shape
 - able to change line to be polygon
 - proper upload of the text
+- (kind of done) better styling
+- add tooltip with description
+- save background and offset in the downloaded data
+- upload background and offset
 
 ## TODO
 
+- finish TODOs
 - validations for everything
-- (kind of done) better styling
-- add tooltip with description what exactly it's doing
 - deep testing of every function
-- save background and offset in the downloaded data
-- upload background and offset
 - (?) CTRL + Z and/or shortcuts
 - (?) preset
 - (?) split shapes
