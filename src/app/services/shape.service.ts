@@ -81,6 +81,7 @@ export class ShapeService {
     });
     textShape.draggable(true);
 
+    this.addEventsForShape(textShape);
     this.layerService.addShape(textShape);
     this.saveShape(textShape);
   }

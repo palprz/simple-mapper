@@ -58,7 +58,6 @@ export class AppComponent implements AfterViewInit {
    * Handle all 'mouseup' events.
    * @param e event
    */
-  // TODO broken interaction with text shape
   private handleMouseUpEvent(e: any) {
     // hide context menu after any click on the stage
     this.hideContextMenu();
@@ -82,6 +81,7 @@ export class AppComponent implements AfterViewInit {
 
       var point = new Point(e.evt.offsetX, e.evt.offsetY);
 
+      // TODO bug: add line -> move line -> close/finish line -> the last point will be coiunted without offset
       if (this.pointService.isNearFirstPoint(this.shapeService.shape, e.evt)) {
         // interaction with first point so close the shape and finish it
         var points = this.shapeService.shape.attrs['points'];
@@ -283,7 +283,6 @@ export class AppComponent implements AfterViewInit {
 
   /**
    * Handle interaction with delete text from context menu.
-   * @param event
    */
   public contextMenuDeleteText() {
     if (!this.nearText) {
