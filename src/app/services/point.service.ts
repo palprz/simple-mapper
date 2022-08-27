@@ -26,12 +26,16 @@ export class PointService {
     for (var i = 0; notTextShapes.length > i; i++) {
       var pointsCoords = notTextShapes[i].attrs['points'];
       for (var j = 0; pointsCoords.length > j; j = j + 2) {
-        var x1 = pointsCoords[j];
-        var y1 = pointsCoords[j + 1];
+        var x1 = pointsCoords[j] + this.addOffset(notTextShapes[i], 'x');
+        var y1 = pointsCoords[j + 1] + this.addOffset(notTextShapes[i], 'y');
         var x2 = event.offsetX;
         var y2 = event.offsetY;
         if (this.isNear(x1, y1, x2, y2)) {
-          return new Near(notTextShapes[i], new Point(x1, y1));
+          // add coordinates of the point without offset
+          return new Near(
+            notTextShapes[i],
+            new Point(pointsCoords[j], pointsCoords[j + 1])
+          );
         }
       }
     }
@@ -48,6 +52,7 @@ export class PointService {
   public getNearText(shapes: Shape[], event: any) {
     var textShapes = shapes.filter((el) => el.type === 'text');
     for (var i = 0; textShapes.length > i; i++) {
+      // we don't really have offset for text so do not add it
       var x1 = textShapes[i].attrs['x'];
       var y1 = textShapes[i].attrs['y'];
       var x2 = event.offsetX;
