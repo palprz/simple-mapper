@@ -81,11 +81,19 @@ export class AppComponent implements AfterViewInit {
 
       var point = new Point(e.evt.offsetX, e.evt.offsetY);
 
-      // TODO bug: add line -> move line -> close/finish line -> the last point will be coiunted without offset
       if (this.pointService.isNearFirstPoint(this.shapeService.shape, e.evt)) {
         // interaction with first point so close the shape and finish it
         var points = this.shapeService.shape.attrs['points'];
-        this.shapeService.addPointToLine(new Point(points[0], points[1]));
+        var offsetX = this.shapeService.shape.attrs['x'];
+        var offsetY = this.shapeService.shape.attrs['y'];
+
+        this.shapeService.addPointToLine(
+          new Point(
+            // tbf offsets shouldn't be added because we are removing it at the end but it's better to not to overcomplicate code later
+            points[0] + (offsetX ? offsetX : 0),
+            points[1] + (offsetY ? offsetY : 0)
+          )
+        );
         this.shapeService.closeLine();
         this.shapeService.finishLine();
       } else if (
