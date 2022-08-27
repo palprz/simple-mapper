@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import { Stage } from 'konva/lib/Stage';
+import { Background } from '../models/background.model';
 import { Shape } from '../models/shape.model';
 
 @Injectable({ providedIn: 'root' })
 export class LayerService {
   private _layer: Konva.Layer;
   private _stage: Stage;
+  private _background: Background;
 
   /**
   /**
@@ -24,6 +26,7 @@ export class LayerService {
     this.updateContainerSize(stageX, stageY);
 
     this._layer = new Konva.Layer();
+    this._background = new Background();
     stage.add(this.layer);
     this.stage = stage;
   }
@@ -55,6 +58,7 @@ export class LayerService {
     this.stage.container().style.background = 'url(' + imgURL + ')';
     this.stage.container().style.backgroundSize = 'cover';
     this.stage.container().style.backgroundRepeat = 'no-repeat';
+    this.background.setData(imgURL);
   }
 
   /**
@@ -65,6 +69,8 @@ export class LayerService {
   public setBackgroundOffset(offsetX: any, offsetY: any) {
     this.stage.container().style.backgroundPositionX = '' + offsetX + 'px';
     this.stage.container().style.backgroundPositionY = '' + offsetY + 'px';
+    this.background.setOffsetX(offsetX);
+    this.background.setOffsetY(offsetY);
   }
 
   /**
@@ -96,6 +102,10 @@ export class LayerService {
 
   get stageContainer() {
     return this._stage.container().getBoundingClientRect();
+  }
+
+  get background() {
+    return this._background;
   }
 
   /**
