@@ -37,10 +37,15 @@ export class LayerService {
    * @param height
    */
   private updateContainerSize(width: any, height: any) {
-    var container = document.getElementById('canvas-container');
-    if (container != undefined) {
-      container.style.width = width + 'px';
-      container.style.height = height + 'px';
+    var canvasContainer = document.getElementById('canvas-container');
+    if (canvasContainer != undefined) {
+      canvasContainer.style.width = width + 'px';
+      canvasContainer.style.height = height + 'px';
+    }
+    var canvasBottom = document.getElementById('canvas-bottom');
+    if (canvasBottom != undefined) {
+      // half of the size - half of the size of the canvas bottom
+      canvasBottom.style.marginLeft = width / 2 - 175 + 'px';
     }
   }
 

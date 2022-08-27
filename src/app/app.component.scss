@@ -71,7 +71,7 @@
     float: left;
     clear: left;
     background-color: #f8f8f8;
-    border: 1px solid black;
+    border: 8px solid #c8a165;
     margin-top: 5px;
     cursor: pointer;
   }
@@ -95,6 +95,13 @@
       &:last-child {
         border: initial;
       }
+    }
+  }
+  #canvas-bottom {
+    float: left;
+    clear: left;
+    img {
+      width: 350px;
     }
   }
 }

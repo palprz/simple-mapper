@@ -190,8 +190,8 @@ export class AppComponent implements AfterViewInit {
   public download() {
     var container = this.layerService.stageContainer;
     var datasToDownload = new StoreData(
-      container.width - 2,
-      container.height - 2,
+      container.width - 16,
+      container.height - 16,
       this.shapeService.shapes,
       this.layerService.background
     );
