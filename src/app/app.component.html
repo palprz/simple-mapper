@@ -47,11 +47,10 @@
     <div id="canvas-container"></div>
     <div id="menu" #menu>
         <div>
-            <button id="delete-point-btn" (click)="contextMenuDeletePoint($event)" #deletePointMenu>Delete
-                point</button>
-            <button id="delete-text-btn" (click)="contextMenuDeleteText($event)" #deleteTextMenu>Delete text</button>
-            <button id="add-text-btn" (click)="contextMenuAddText($event)">Add text</button>
-            <button id="close-btn" (click)="contextMenuCloseMenuAction($event)">Close menu</button>
+            <button (click)="contextMenuDeletePoint()" #deletePointMenu>Delete point</button>
+            <button (click)="contextMenuDeleteText()" #deleteTextMenu>Delete text</button>
+            <button (click)="contextMenuAddText()">Add text</button>
+            <button (click)="contextMenuCloseMenuAction()">Close menu</button>
         </div>
     </div>
 </div>

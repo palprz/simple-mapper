@@ -13,14 +13,14 @@ import { StoreData } from './models/store-data.model';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild('menu') 
-  menu: ElementRef;
-  
-  @ViewChild('deletePointMenu') 
-  deletePointMenu: ElementRef;
+  @ViewChild('menu')
+  private menu: ElementRef;
 
-  @ViewChild('deleteTextMenu') 
-  deleteTextMenu: ElementRef;
+  @ViewChild('deletePointMenu')
+  private deletePointMenu: ElementRef;
+
+  @ViewChild('deleteTextMenu')
+  private deleteTextMenu: ElementRef;
 
   private nearPoint: any;
   private nearText: any;
@@ -257,9 +257,8 @@ export class AppComponent implements AfterViewInit {
 
   /**
    * Handle interaction with delete point from context menu.
-   * @param event
    */
-  public contextMenuDeletePoint(event: any) {
+  public contextMenuDeletePoint() {
     if (!this.nearPoint) {
       // not properly setup data
       return;
@@ -277,7 +276,7 @@ export class AppComponent implements AfterViewInit {
    * Handle interaction with delete text from context menu.
    * @param event
    */
-  public contextMenuDeleteText(event: any) {
+  public contextMenuDeleteText() {
     if (!this.nearText) {
       // not properly setup data
       return;
@@ -291,10 +290,9 @@ export class AppComponent implements AfterViewInit {
 
   /**
    * Handle interaction with add text from context menu.
-   * @param event
    * @returns
    */
-  public contextMenuAddText(event: any) {
+  public contextMenuAddText() {
     this.hideContextMenu();
     var input = prompt('Please enter the text');
     if (input == null || input == '') {
@@ -307,9 +305,8 @@ export class AppComponent implements AfterViewInit {
 
   /**
    * Handle interaction with close menu from context menu.
-   * @param event
    */
-  public contextMenuCloseMenuAction(event: any) {
+  public contextMenuCloseMenuAction() {
     this.hideContextMenu();
   }
 
