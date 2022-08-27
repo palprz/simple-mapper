@@ -69,10 +69,9 @@ export class ShapeService {
    * Create text shape.
    * @param text value to be displayed as a text
    * @param menuClickPoint contains coordinates where the text should be added to the layer
-   * @returns
    */
   public createText(text: string, menuClickPoint: Point) {
-    this.shape = new Konva.Text({
+    var textShape = new Konva.Text({
       id: uuidv4(),
       x: menuClickPoint.x,
       y: menuClickPoint.y,
@@ -80,11 +79,10 @@ export class ShapeService {
       fontSize: 18,
       fontFamily: 'Calibri',
     });
-    this.shape.draggable(true);
+    textShape.draggable(true);
 
-    this.layerService.addShape(this.shape);
-    this.saveShape(this.shape);
-    return this.shape;
+    this.layerService.addShape(textShape);
+    this.saveShape(textShape);
   }
 
   /**
@@ -230,6 +228,13 @@ export class ShapeService {
    * @param shape the shape which will have changed cursor
    */
   private addEventsForShape(shape: any) {
+    shape.on('mouseover', () => {
+      document.body.style.cursor = 'pointer';
+    });
+    shape.on('mouseout', () => {
+      document.body.style.cursor = 'default';
+    });
+
     shape.on('dragstart', () => {
       this.isDragAction = true;
     });
