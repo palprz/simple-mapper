@@ -1,13 +1,30 @@
 .left-side {
   float: left;
   width: 320px;
+  .app-name {
+    font-size: 24px;
+    text-align: center;
+  }
+  .app-author{
+    text-align: center;
+    margin-top: -20px;
+  }
 }
 
 .right-side {
   float: left;
+  & > span {
+    float: left;
+    clear: left;
+    &:first-child {
+      margin-top: 10px;
+    }
+  }
 }
 
 #canvas-container {
+  float: left;
+  clear: left;
   background-color: #f8f8f8;
   border: 1px solid black;
   margin-top: 5px;
@@ -36,20 +53,15 @@
     }
   }
 }
-
+.download,
 form {
-  clear: left;
-  float: left;
-}
-
-.download {
   clear: left;
   float: left;
 }
 
 .demo {
   float: left;
-  margin-left: 20px;
+  margin-left: 58px;
 }
 
 input[type="file"] {
