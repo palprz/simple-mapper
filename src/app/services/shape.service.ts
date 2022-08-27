@@ -24,7 +24,6 @@ export class ShapeService {
    * Start the Line and hold it as a class variable.
    */
   public startLine() {
-    console.log('Start the line');
     this.shape = new Konva.Line({
       id: uuidv4(),
       points: [],
@@ -40,7 +39,6 @@ export class ShapeService {
   }
 
   private uploadText(newText: any) {
-    console.log('UPLOAD the text');
     var uploadedText = new Konva.Text(newText.attrs);
     uploadedText.draggable(true);
     this.layerService.addShape(uploadedText);
@@ -51,7 +49,6 @@ export class ShapeService {
    * @param newLine contains points to define new Line.
    */
   private uploadLine(newLine: any) {
-    console.log('UPLOAD the line/polygon');
     var uploadedLine = new Konva.Line(newLine.attrs);
     this.addEventsForShape(uploadedLine);
     this.layerService.addShape(uploadedLine);
@@ -108,7 +105,6 @@ export class ShapeService {
         )
       );
     }
-    console.log('SAVED shape', this.shapes[this.shapes.length - 1]);
   }
 
   /**
@@ -166,7 +162,6 @@ export class ShapeService {
    * @param point contains X and Y coordinates
    */
   public addPointToLine(point: Point) {
-    console.log('ADD POINT the line');
     this.addPointToShape(this.shape, point);
     this.pointService.lastPoint = point;
   }
@@ -182,7 +177,6 @@ export class ShapeService {
    * Finished currently holded Line. Finished Line will be stored in class variable with rest shapes.
    */
   public finishLine() {
-    console.log('FINISH the line');
     this.shape.attrs['stroke'] = 'black';
     this.saveShape(this.shape);
     this.shape = undefined;

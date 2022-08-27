@@ -115,7 +115,6 @@ export class PointService {
       case 'last': {
         x1 = shape.attrs['points'][shape.attrs['points'].length - 2];
         y1 = shape.attrs['points'][shape.attrs['points'].length - 1];
-        console.log('x1 y1', x1, y1);
         break;
       }
       default: {

@@ -6,6 +6,7 @@ import { ShapeService } from './services/shape.service';
 import { DataService } from './services/data.service';
 import { LayerService } from './services/layer.service';
 import { StoreData } from './models/store-data.model';
+import { Stage } from 'konva/lib/Stage';
 
 @Component({
   selector: 'app-root',
@@ -35,17 +36,19 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.layerService.initStage();
+    this.addEventsToStage(this.layerService.stage);
+  }
 
-    // assign events to the stage
-    this.layerService.stage.on('mouseup', (e) => {
+  private addEventsToStage(stage: Stage) {
+    stage.on('mouseup', (e) => {
       this.handleMouseUpEvent(e);
     });
 
-    this.layerService.stage.on('mousemove', (e) => {
+    stage.on('mousemove', (e) => {
       this.handleMouseMoveEvent(e);
     });
 
-    this.layerService.stage.on('contextmenu', (e) => {
+    stage.on('contextmenu', (e) => {
       e.evt.preventDefault();
       this.displayContextMenu(e);
     });
@@ -212,9 +215,16 @@ export class AppComponent implements AfterViewInit {
       // TODO validation
       var newDatas = JSON.parse(<any>fileReader.result);
       // set size of the stage and background for it
-      this.layerService.processUpload(newDatas.stageX, newDatas.stageY, newDatas.background);
+      this.layerService.processUpload(
+        newDatas.stageX,
+        newDatas.stageY,
+        newDatas.background
+      );
       // setup all shapes
       this.shapeService.processUpload(newDatas.shapes);
+
+      // after re-init stage, we need to re-add events because it's a new object now
+      this.addEventsToStage(this.layerService.stage);
     };
   }
 
