@@ -1,44 +1,50 @@
-<form class="pure-form pure-form-stacked" (submit)="handleUploadedData($event)">
-    <fieldset>
-        <label>Upload saved data</label>
-        <input type="file" />
-        <button type="submit" class="pure-button pure-button-primary">Upload</button>
-    </fieldset>
-</form>
+<div class="left-side">
+    <button class="download pure-button pure-button-primary" (click)="download()">Download data</button>
+    <button class="demo pure-button pure-button-primary" (click)="demo()">See demo</button>
 
-<form class="pure-form pure-form-stacked" (submit)="uploadStageBackground($event)">
-    <fieldset>
-        <label>Upload background</label>
-        <input type="file" />
-        <button type="submit" class="pure-button pure-button-primary">Upload</button>
-    </fieldset>
-</form>
+    <form class="pure-form pure-form-stacked" (submit)="handleUploadedData($event)">
+        <fieldset>
+            <label>Saved data</label>
+            <input type="file" />
+            <button type="submit" class="pure-button button-secondary">Upload</button>
+        </fieldset>
+    </form>
 
-<form class="pure-form pure-form-stacked" (submit)="handleBackgroundOffsetChange($event)">
-    <fieldset>
-        <label>Change background offset</label>
-        <input type="text" />
-        <button type="submit" class="pure-button pure-button-primary">Send</button>
-    </fieldset>
-</form>
+    <form class="pure-form pure-form-stacked" (submit)="uploadStageBackground($event)">
+        <fieldset>
+            <label>Background</label>
+            <input type="file" />
+            <button type="submit" class="pure-button button-secondary">Upload</button>
+        </fieldset>
+    </form>
 
-<form class="pure-form pure-form-stacked" (submit)="handleStageSizeChange($event)">
-    <fieldset>
-        <label>Change size of canvas</label>
-        <input type="text" />
-        <button type="submit" class="pure-button pure-button-primary">Send</button>
-    </fieldset>
-</form>
+    <form class="pure-form pure-form-stacked" (submit)="handleBackgroundOffsetChange($event)">
+        <fieldset>
+            <label>Background offset</label>
+            <input type="text" />
+            <button type="submit" class="pure-button button-secondary">Change</button>
+        </fieldset>
+    </form>
 
-<button class="download pure-button pure-button-primary" (click)="download()">Download data</button>
-<button class="demo pure-button pure-button-primary" (click)="demo()">See demo</button>
+    <form class="pure-form pure-form-stacked" (submit)="handleStageSizeChange($event)">
+        <fieldset>
+            <label>Size of canvas</label>
+            <input type="text" />
+            <button type="submit" class="pure-button button-secondary">Change</button>
+        </fieldset>
+    </form>
+</div>
 
-<div id="canvas-container"></div>
-<div id="menu" #menu>
-    <div>
-        <button id="delete-point-btn" (click)="contextMenuDeletePoint($event)" #deletePointMenu>Delete point</button>
-        <button id="delete-text-btn" (click)="contextMenuDeleteText($event)" #deleteTextMenu>Delete text</button>
-        <button id="add-text-btn" (click)="contextMenuAddText($event)">Add text</button>
-        <button id="close-btn" (click)="contextMenuCloseMenuAction($event)">Close menu</button>
+<div class="right-side">
+    Canvas:
+    <div id="canvas-container"></div>
+    <div id="menu" #menu>
+        <div>
+            <button id="delete-point-btn" (click)="contextMenuDeletePoint($event)" #deletePointMenu>Delete
+                point</button>
+            <button id="delete-text-btn" (click)="contextMenuDeleteText($event)" #deleteTextMenu>Delete text</button>
+            <button id="add-text-btn" (click)="contextMenuAddText($event)">Add text</button>
+            <button id="close-btn" (click)="contextMenuCloseMenuAction($event)">Close menu</button>
+        </div>
     </div>
 </div>
