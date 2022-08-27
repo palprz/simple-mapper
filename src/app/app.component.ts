@@ -100,7 +100,6 @@ export class AppComponent implements AfterViewInit {
         this.pointService.isNearLastPoint(this.shapeService.shape, e.evt)
       ) {
         // clicked same point - finish shape
-        // TODO BUG cannot finish when moved the shape
         this.shapeService.finishLine();
       } else {
         // extend the shape by the new point

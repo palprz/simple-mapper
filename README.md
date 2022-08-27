@@ -35,9 +35,8 @@ TODO update this readme
 
 ## TODO
 
-- finish TODOs
 - validations for everything
-- deep testing of every function
+- IN PROGRESS: deep testing of every function
 - (?) CTRL + Z and/or shortcuts
 - (?) preset
 - (?) split shapes
