@@ -248,13 +248,6 @@ export class ShapeService {
    * @param shape the shape which will have changed cursor
    */
   private addEventsForShape(shape: any) {
-    shape.on('mouseover', () => {
-      document.body.style.cursor = 'pointer';
-    });
-    shape.on('mouseout', () => {
-      document.body.style.cursor = 'default';
-    });
-
     shape.on('dragstart', () => {
       this.isDragAction = true;
     });

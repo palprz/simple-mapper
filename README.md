@@ -1,6 +1,8 @@
-# SimpleMapper [August 2022 - ?]
+# Simple Mapper
 
 TODO update this readme
+
+[Information icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/information)
 
 ## TODO things which have been done from the list of things to do (the list below this one)
 
@@ -30,11 +32,11 @@ TODO update this readme
 ## TODO
 
 - validations for everything
-- better styling
-- add description for each option
-- list with possible actions for the simpler-mapper
+- (kind of done) better styling
 - add tooltip with description what exactly it's doing
 - deep testing of every function
+- save background and offset in the downloaded data
+- upload background and offset
 - (?) CTRL + Z and/or shortcuts
 - (?) preset
 - (?) split shapes
@@ -47,4 +49,4 @@ TODO update this readme
 - (?) change size and colour of the added text
 - create a demo data
 - screenshots of running app (bye bye Heroku)
-- update this README
+- update this README (remember to add list with all possible actions)

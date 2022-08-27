@@ -13,9 +13,14 @@ import { StoreData } from './models/store-data.model';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild('menu') menu: ElementRef;
-  @ViewChild('deletePointMenu') deletePointMenu: ElementRef;
-  @ViewChild('deleteTextMenu') deleteTextMenu: ElementRef;
+  @ViewChild('menu') 
+  menu: ElementRef;
+  
+  @ViewChild('deletePointMenu') 
+  deletePointMenu: ElementRef;
+
+  @ViewChild('deleteTextMenu') 
+  deleteTextMenu: ElementRef;
 
   private nearPoint: any;
   private nearText: any;

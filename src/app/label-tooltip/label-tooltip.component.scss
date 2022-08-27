@@ -1,0 +1,19 @@
+.tooltip {
+  display: inline-block;
+  img {
+    width: 16px;
+  }
+  span {
+    width: 250px;
+    padding: 5px;
+    position: absolute;
+    visibility: hidden;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid black;
+    z-index: 1;
+  }
+  &:hover span {
+    visibility: visible;
+  }
+}

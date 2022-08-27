@@ -4,7 +4,9 @@
 
     <form class="pure-form pure-form-stacked" (submit)="handleUploadedData($event)">
         <fieldset>
-            <label>Saved data</label>
+            <app-label-tooltip labelText="Saved data"
+                tooltipText="Upload previously saved data to display on the canvas (that includes size of canvas, background and offset). The existing canvas will be overriden!">
+            </app-label-tooltip>
             <input type="file" />
             <button type="submit" class="pure-button button-secondary">Upload</button>
         </fieldset>
@@ -12,7 +14,8 @@
 
     <form class="pure-form pure-form-stacked" (submit)="uploadStageBackground($event)">
         <fieldset>
-            <label>Background</label>
+            <app-label-tooltip labelText="Background" tooltipText="Upload background for the canvas.">
+            </app-label-tooltip>
             <input type="file" />
             <button type="submit" class="pure-button button-secondary">Upload</button>
         </fieldset>
@@ -20,7 +23,9 @@
 
     <form class="pure-form pure-form-stacked" (submit)="handleBackgroundOffsetChange($event)">
         <fieldset>
-            <label>Background offset</label>
+            <app-label-tooltip labelText="Background offset"
+                tooltipText="Set the offset for uploaded background. Offset will be count in pixels. You should provide X and Y coordinates separated with comma, example: '20,15'">
+            </app-label-tooltip>
             <input type="text" />
             <button type="submit" class="pure-button button-secondary">Change</button>
         </fieldset>
@@ -28,7 +33,9 @@
 
     <form class="pure-form pure-form-stacked" (submit)="handleStageSizeChange($event)">
         <fieldset>
-            <label>Size of canvas</label>
+            <app-label-tooltip labelText="Size of canvas"
+                tooltipText="Set the size of canvas. Size will be count in pixels. You should provide width and height coordinates values with comma, example: '900,500'">
+            </app-label-tooltip>
             <input type="text" />
             <button type="submit" class="pure-button button-secondary">Change</button>
         </fieldset>
