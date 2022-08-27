@@ -171,24 +171,37 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  // TODO docs
+  public demo() {
+    // TODO
+  }
+
+  // TODO docs
   public download() {
+    var container = this.layerService.stageContainer;
     var datasToDownload = new StoreData(
       // remove borders from below value
-      this.layerService.stageContainer.width - 2,
+      container.width - 2,
       // remove borders from below value
-      this.layerService.stageContainer.height - 2,
+      container.height - 2,
       this.shapeService.shapes
     );
     this.dataService.download(datasToDownload);
   }
 
-  public handleUploadedFile(event: any) {
-    if (event.target.files.length == 0) {
+  /**
+   * Handle event with uploading the data to save to the stage.
+   * @param event
+   * @returns
+   */
+  public handleUploadedData(event: any) {
+    event.preventDefault();
+    if (event.target[1].files.length == 0) {
       // no file to upload - ignore event
       return;
     }
     var fileReader = new FileReader();
-    fileReader.readAsText(event.target.files[0], 'UTF-8');
+    fileReader.readAsText(event.target[1].files[0], 'UTF-8');
     fileReader.onload = () => {
       // TODO validation
       var newDatas = JSON.parse(<any>fileReader.result);
@@ -205,12 +218,13 @@ export class AppComponent implements AfterViewInit {
    * @returns
    */
   public uploadStageBackground(event: any) {
-    if (event.target.files.length == 0) {
+    event.preventDefault();
+    if (event.target[1].files.length == 0) {
       // no file to upload - ignore event
       return;
     }
     var reader = new FileReader();
-    reader.readAsDataURL(event.target.files[0]);
+    reader.readAsDataURL(event.target[1].files[0]);
     reader.onload = () => {
       this.layerService.uploadStageBackground(reader.result);
     };
@@ -221,7 +235,8 @@ export class AppComponent implements AfterViewInit {
    * @param event contains X and Y for offset
    */
   public handleBackgroundOffsetChange(event: any) {
-    var offsets = event.target.value.split(',', 2);
+    event.preventDefault();
+    var offsets = event.target[1].value.split(',', 2);
     this.layerService.setBackgroundOffset(offsets[0], offsets[1]);
   }
 
@@ -230,7 +245,8 @@ export class AppComponent implements AfterViewInit {
    * @param event contains X and Y for offset
    */
   public handleStageSizeChange(event: any) {
-    var size = event.target.value.split(',', 2);
+    event.preventDefault();
+    var size = event.target[1].value.split(',', 2);
     this.layerService.setStageSize(size[0], size[1]);
   }
 

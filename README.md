@@ -29,10 +29,8 @@ TODO update this readme
 
 ## TODO
 
-- able to change polygon to be line
 - validations for everything
 - better styling
-- optimalisation https://konvajs.org/docs/performance/Optimize_Strokes.html
 - add description for each option
 - list with possible actions for the simpler-mapper
 - add tooltip with description what exactly it's doing
@@ -47,6 +45,6 @@ TODO update this readme
 - (?) scale shapes https://konvajs.org/docs/select_and_transform/Resize_Snaps.html
 - (?) pressing and hold mouse -> creating rect
 - (?) change size and colour of the added text
-- create a demo object
+- create a demo data
 - screenshots of running app (bye bye Heroku)
 - update this README

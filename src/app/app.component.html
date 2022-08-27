@@ -1,9 +1,37 @@
-<button (click)="download()">Download data</button>
-<label>Upload data:</label><input type="file" (change)="handleUploadedFile($event)" />
-<label>Upload background:</label><input type="file" (change)="uploadStageBackground($event)" />
-<label>Background offset:</label><input type="text" (change)="handleBackgroundOffsetChange($event)" />
-<label>Size of canvas:</label><input type="text" (change)="handleStageSizeChange($event)" />
+<form class="pure-form pure-form-stacked" (submit)="handleUploadedData($event)">
+    <fieldset>
+        <label>Upload saved data</label>
+        <input type="file" />
+        <button type="submit" class="pure-button pure-button-primary">Upload</button>
+    </fieldset>
+</form>
 
+<form class="pure-form pure-form-stacked" (submit)="uploadStageBackground($event)">
+    <fieldset>
+        <label>Upload background</label>
+        <input type="file" />
+        <button type="submit" class="pure-button pure-button-primary">Upload</button>
+    </fieldset>
+</form>
+
+<form class="pure-form pure-form-stacked" (submit)="handleBackgroundOffsetChange($event)">
+    <fieldset>
+        <label>Change background offset</label>
+        <input type="text" />
+        <button type="submit" class="pure-button pure-button-primary">Send</button>
+    </fieldset>
+</form>
+
+<form class="pure-form pure-form-stacked" (submit)="handleStageSizeChange($event)">
+    <fieldset>
+        <label>Change size of canvas</label>
+        <input type="text" />
+        <button type="submit" class="pure-button pure-button-primary">Send</button>
+    </fieldset>
+</form>
+
+<button class="download pure-button pure-button-primary" (click)="download()">Download data</button>
+<button class="demo pure-button pure-button-primary" (click)="demo()">See demo</button>
 
 <div id="canvas-container"></div>
 <div id="menu" #menu>

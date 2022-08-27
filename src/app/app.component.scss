@@ -1,15 +1,16 @@
 #canvas-container {
+  clear: left;
   background-color: #efefef;
   border: 1px solid black;
-  margin-top: 20px;
+  margin: 20px 0 0 10px;
 }
 
 #menu {
   display: none;
   position: absolute;
   width: 150px;
-  background-color: white;
-  box-shadow: 0 0 5px grey;
+  background-color: #fff;
+  box-shadow: 0 0 5px #888;
   border-radius: 3px;
   button {
     width: 100%;
@@ -19,10 +20,39 @@
     padding: 10px;
     border-bottom: 1px solid #ddd;
     &:hover {
-      background-color: lightgray;
+      background-color: #ddd;
     }
     &:last-child {
       border: initial;
+    }
+  }
+}
+
+form,
+.download,
+.demo {
+  float: left;
+  margin: 5px 10px;
+}
+
+input[type="file"] {
+  width: 400px;
+  background: #fff;
+  color: #888;
+  border: 1px solid #888;
+  &::file-selector-button {
+    padding: 10px 20px;
+    margin-right: 20px;
+    background: #0078e7;
+    color: #fff;
+    border: none;
+    &:hover {
+      cursor: pointer;
+      background-image: linear-gradient(
+        transparent,
+        rgba(0, 0, 0, 0.05) 40%,
+        rgba(0, 0, 0, 0.1)
+      );
     }
   }
 }
