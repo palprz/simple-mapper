@@ -7,7 +7,7 @@ A tool to create a map based on uploaded background (example: satellite image or
 Screenshot with demo:
 ![Screenshot from the demo of the application](https://github.com/palprz/simple-mapper/blob/master/github/img/demo.png)
 
-Gif presenting basic functionaliy:
+Gif presenting basic functionality:
 ![Gif with simple functionality of the application](https://github.com/palprz/simple-mapper/blob/master/github/img/demo.gif)
 
 ## Technologies
