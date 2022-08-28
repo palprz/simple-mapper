@@ -4,6 +4,7 @@
     <button class="download pure-button pure-button-primary" (click)="download()">Download data</button>
     <button class="demo pure-button pure-button-primary" (click)="demo()">See demo</button>
 
+
     <form class="pure-form pure-form-stacked" (submit)="handleUploadedData($event)">
         <fieldset>
             <app-label-tooltip labelText="Saved data"
@@ -22,6 +23,9 @@
             <button type="submit" class="pure-button button-secondary">Upload</button>
         </fieldset>
     </form>
+
+    <button class="remove-background pure-button button-secondary" (click)="removeBackground()">Remove
+        background</button>
 
     <form class="pure-form pure-form-stacked" (submit)="handleBackgroundOffsetChange($event)">
         <fieldset>

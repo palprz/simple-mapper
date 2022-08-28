@@ -14,4 +14,6 @@ export class Messages {
 
   public static readonly ERROR_MISSING_DATA =
     "Uploaded file hasn't got all required data (stageX, stageY, background, shapes).";
+
+    public static readonly CONFIRM_REMOVE_BACKGROUND ="Do you really want to remove the background from canvas?";
 }

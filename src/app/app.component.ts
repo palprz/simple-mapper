@@ -206,6 +206,15 @@ export class AppComponent implements AfterViewInit {
   }
 
   /**
+   * Remove the background from stage.
+   */
+  public removeBackground() {
+    if (confirm(Messages.CONFIRM_REMOVE_BACKGROUND)) {
+      this.layerService.setStageBackground(null);
+    }
+  }
+
+  /**
    * Download data. Includes: size of stage, shapes, background and offsets for background.
    */
   public download() {
