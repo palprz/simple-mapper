@@ -36,7 +36,7 @@ export class LayerService {
    * @param width
    * @param height
    */
-  private updateContainerSize(width: any, height: any) {
+  private updateContainerSize(width: number, height: number) {
     var canvasContainer = document.getElementById('canvas-container');
     if (canvasContainer != undefined) {
       canvasContainer.style.width = width + 'px';
@@ -89,7 +89,7 @@ export class LayerService {
    * @param width
    * @param height
    */
-  public setStageSize(width: any, height: any) {
+  public setStageSize(width: number, height: number) {
     this.stage.width(width);
     this.stage.height(height);
     this.updateContainerSize(width, height);
@@ -145,7 +145,7 @@ export class LayerService {
    * Add shape to the layer
    * @param shape
    */
-  public addShape(shape: any) {
+  public addShape(shape: Konva.Shape) {
     this.layer.add(shape);
   }
 

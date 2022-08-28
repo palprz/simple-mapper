@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import Konva from 'konva';
 import { Near } from '../models/near-point.model';
 import { Point } from '../models/point.model';
 import { Shape } from '../models/shape.model';
@@ -70,7 +71,7 @@ export class PointService {
    * @param event contains coordinates of X and Y which will tell where is mouse
    * @returns
    */
-  public isNearFirstPoint(shape: any, event: any) {
+  public isNearFirstPoint(shape: Konva.Shape, event: any) {
     return this.isNearPoint(shape, event, 'first');
   }
 
@@ -80,11 +81,11 @@ export class PointService {
    * @param event contains coordinates of X and Y which will tell where is mouse
    * @returns
    */
-  public isNearLastPoint(shape: any, event: any) {
+  public isNearLastPoint(shape: Konva.Shape, event: any) {
     return this.isNearPoint(shape, event, 'last');
   }
 
-  private isNearPoint(shape: any, event: any, whichPoint: string) {
+  private isNearPoint(shape: Konva.Shape, event: any, whichPoint: string) {
     var x1, y1;
     var points = shape.attrs['points'];
     switch (whichPoint) {

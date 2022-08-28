@@ -38,7 +38,7 @@ export class ShapeService {
     this.layerService.addShape(this.shape);
   }
 
-  private uploadText(newText: any) {
+  private uploadText(newText: Shape) {
     var uploadedText = new Konva.Text(newText.attrs);
     uploadedText.draggable(true);
     this.layerService.addShape(uploadedText);
@@ -48,7 +48,7 @@ export class ShapeService {
    * Add new Line based on provided input.
    * @param newLine contains points to define new Line.
    */
-  private uploadLine(newLine: any) {
+  private uploadLine(newLine: Shape) {
     var uploadedLine = new Konva.Line(newLine.attrs);
     this.addEventsForShape(uploadedLine);
     this.layerService.addShape(uploadedLine);
@@ -198,14 +198,14 @@ export class ShapeService {
    * @param shape contains coordinates which should be removed from the new point
    * @param newPoint the new point to be added
    */
-  private addPointToShape(shape: any, newPoint: Point) {
+  private addPointToShape(shape: Konva.Shape, newPoint: Point) {
     shape.attrs['points'].push(
       newPoint.x - this.getOffset(shape, 'x'),
       newPoint.y - this.getOffset(shape, 'y')
     );
   }
 
-  private getOffset(shape: any, coord: string) {
+  private getOffset(shape: Konva.Shape, coord: string) {
     return shape.attrs[coord] ? shape.attrs[coord] : 0;
   }
 
@@ -214,7 +214,7 @@ export class ShapeService {
    * @param shape contains attributes with coordinates
    * @returns Points or undefined (if not enough coordinates)
    */
-  private getLastPointFromShape(shape: any) {
+  private getLastPointFromShape(shape: Konva.Shape) {
     var coords = shape.attrs['points'];
     if (coords.length < 2) {
       // 0 or 1 coords - not enough to create point
@@ -228,7 +228,7 @@ export class ShapeService {
    * Change cursor for the shape after mouse over it.
    * @param shape the shape which will have changed cursor
    */
-  private addEventsForShape(shape: any) {
+  private addEventsForShape(shape: Konva.Shape) {
     shape.on('mouseover', () => {
       document.body.style.cursor = 'pointer';
     });
@@ -250,7 +250,7 @@ export class ShapeService {
    * Handle provided data and add them to the layer.
    * @param newShapes new shapes to add
    */
-  public processUpload(newShapes: any) {
+  public processUpload(newShapes: Shape[]) {
     this.layerService.clear();
 
     for (var i = 0; newShapes.length > i; i++) {
