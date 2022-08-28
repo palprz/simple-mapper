@@ -7,6 +7,7 @@ import { DataService } from './services/data.service';
 import { LayerService } from './services/layer.service';
 import { StoreData } from './models/store-data.model';
 import { Stage } from 'konva/lib/Stage';
+import { Messages } from './commons/messages';
 
 @Component({
   selector: 'app-root',
@@ -50,7 +51,7 @@ export class AppComponent implements AfterViewInit {
 
     stage.on('contextmenu', (e) => {
       e.evt.preventDefault();
-      this.displayContextMenu(e);
+      this.initContextMenu(e);
     });
   }
 
@@ -130,29 +131,32 @@ export class AppComponent implements AfterViewInit {
   }
 
   /**
-   * Display context menu next to the pointer.
+   * Init context menu next to the pointer.
    */
-  private displayContextMenu(e: any) {
+  private initContextMenu(e: any) {
     var pointerCoords = this.layerService.stage.getPointerPosition();
     if (!pointerCoords) {
       // this shouldn't be possible but return just in case
       return;
     }
 
-    // display context menu
+    this.displayContextMenu(pointerCoords);
+
+    this.menuClickPoint = new Point(e.evt.offsetX, e.evt.offsetY);
+    this.prepareDeletePointMenu(e);
+    this.prepareDeleteTextMenu(e);
+  }
+
+  /**
+   * Make visible context menu next to the pointer coordinates.
+   * @param pointerCoords
+   */
+  private displayContextMenu(pointerCoords: any) {
     var stageContainer = this.layerService.stageContainer;
     var menuStyle = this.menu.nativeElement.style;
     menuStyle.display = 'initial';
     menuStyle.top = stageContainer.top + pointerCoords.y + 'px';
     menuStyle.left = stageContainer.left + pointerCoords.x + 'px';
-
-    // disable button by default
-    this.deletePointMenu.nativeElement.disabled = true;
-    this.deleteTextMenu.nativeElement.disabled = true;
-
-    this.menuClickPoint = new Point(e.evt.offsetX, e.evt.offsetY);
-    this.prepareDeletePointMenu(e);
-    this.prepareDeleteTextMenu(e);
   }
 
   /**
@@ -168,6 +172,8 @@ export class AppComponent implements AfterViewInit {
     if (nearPoint) {
       this.nearPoint = nearPoint;
       this.deletePointMenu.nativeElement.disabled = false;
+    } else {
+      this.deletePointMenu.nativeElement.disabled = true;
     }
   }
 
@@ -183,6 +189,8 @@ export class AppComponent implements AfterViewInit {
     if (nearText) {
       this.nearText = nearText;
       this.deleteTextMenu.nativeElement.disabled = false;
+    } else {
+      this.deleteTextMenu.nativeElement.disabled = true;
     }
   }
 
@@ -213,13 +221,16 @@ export class AppComponent implements AfterViewInit {
   public handleUploadedData(event: any) {
     event.preventDefault();
     if (event.target[1].files.length == 0) {
-      // no file to upload - ignore event
+      alert(Messages.ERROR_NO_FILE);
+      return;
+    }
+    if (!event.target[1].files[0].type.includes('application/json')) {
+      alert(Messages.ERROR_NOT_JSON);
       return;
     }
     var fileReader = new FileReader();
     fileReader.readAsText(event.target[1].files[0], 'UTF-8');
     fileReader.onload = () => {
-      // TODO validation
       var newDatas = JSON.parse(<any>fileReader.result);
       // set size of the stage and background for it
       this.layerService.processUpload(
@@ -243,7 +254,11 @@ export class AppComponent implements AfterViewInit {
   public uploadStageBackground(event: any) {
     event.preventDefault();
     if (event.target[1].files.length == 0) {
-      // no file to upload - ignore event
+      alert(Messages.ERROR_NO_FILE);
+      return;
+    }
+    if (!event.target[1].files[0].type.includes('image')) {
+      alert(Messages.ERROR_NOT_IMAGE);
       return;
     }
     var reader = new FileReader();
@@ -260,6 +275,10 @@ export class AppComponent implements AfterViewInit {
   public handleBackgroundOffsetChange(event: any) {
     event.preventDefault();
     var offsets = event.target[1].value.split(',', 2);
+    if (offsets.length != 2) {
+      alert(Messages.ERROR_INVALID_OFFSET);
+      return;
+    }
     this.layerService.setBackgroundOffset(offsets[0], offsets[1]);
   }
 
@@ -270,6 +289,10 @@ export class AppComponent implements AfterViewInit {
   public handleStageSizeChange(event: any) {
     event.preventDefault();
     var size = event.target[1].value.split(',', 2);
+    if (size.length != 2) {
+      alert(Messages.ERROR_STAGE_SIZE);
+      return;
+    }
     this.layerService.setStageSize(size[0], size[1]);
   }
 
