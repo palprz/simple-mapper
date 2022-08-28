@@ -7,12 +7,12 @@ import { ShapeService } from './shape.service';
 export class DataService {
   /**
    * Create HTML link and click it with generated JSON based on stored shapes.
-   * @param dataToDownload
+   * @param downloadDatas
    */
-  public download(dataToDownload: StoreData) {
+  public download(downloadDatas: StoreData) {
     var a = document.createElement('a');
     a.href = window.URL.createObjectURL(
-      new Blob([JSON.stringify(dataToDownload, null, 2)], {
+      new Blob([JSON.stringify(downloadDatas, null, 2)], {
         type: 'application/json;charset=utf-8',
       })
     );
