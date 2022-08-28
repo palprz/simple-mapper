@@ -66,7 +66,7 @@ export class LayerService {
    * @param imgURL the data with background
    */
   public setStageBackground(imgURL: any) {
-    if (imgURL === null) {
+    if (!imgURL) {
       this.stage.container().style.background = '';
       this.stage.container().style.backgroundSize = '';
       this.stage.container().style.backgroundRepeat = '';

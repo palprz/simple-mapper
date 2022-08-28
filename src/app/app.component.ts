@@ -210,7 +210,7 @@ export class AppComponent implements AfterViewInit {
    */
   public removeBackground() {
     if (confirm(Messages.CONFIRM_REMOVE_BACKGROUND)) {
-      this.layerService.setStageBackground(null);
+      this.layerService.setStageBackground(undefined);
     }
   }
 
