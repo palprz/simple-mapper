@@ -194,9 +194,15 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  // TODO docs
+  /**
+   * Handle event to display a demo on screen. Load precreated JSON with demo data.
+   */
   public demo() {
-    // TODO
+    fetch('./assets/demo/demo.json')
+      .then((res) => res.json())
+      .then((newDatas) => {
+        this.processUpload(newDatas);
+      });
   }
 
   /**
@@ -231,19 +237,34 @@ export class AppComponent implements AfterViewInit {
     var fileReader = new FileReader();
     fileReader.readAsText(event.target[1].files[0], 'UTF-8');
     fileReader.onload = () => {
-      var newDatas = JSON.parse(<any>fileReader.result);
-      // set size of the stage and background for it
-      this.layerService.processUpload(
-        newDatas.stageX,
-        newDatas.stageY,
-        newDatas.background
-      );
-      // setup all shapes
-      this.shapeService.processUpload(newDatas.shapes);
-
-      // after re-init stage, we need to re-add events because it's a new object now
-      this.addEventsToStage(this.layerService.stage);
+      this.processUpload(JSON.parse(<any>fileReader.result));
     };
+  }
+
+  /**
+   * Handle the process of upload and send the proper data to the rest services.
+   */
+  private processUpload(newDatas: StoreData) {
+    if (
+      !newDatas.stageX ||
+      !newDatas.stageY ||
+      !newDatas.background ||
+      !newDatas.shapes
+    ) {
+      alert(Messages.ERROR_MISSING_DATA);
+      return;
+    }
+    // set size of the stage and background for it
+    this.layerService.processUpload(
+      newDatas.stageX,
+      newDatas.stageY,
+      newDatas.background
+    );
+    // setup all shapes
+    this.shapeService.processUpload(newDatas.shapes);
+
+    // after re-init stage, we need to re-add events because it's a new object now
+    this.addEventsToStage(this.layerService.stage);
   }
 
   /**

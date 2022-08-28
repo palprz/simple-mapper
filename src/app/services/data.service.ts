@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Shape } from '../models/shape.model';
 import { StoreData } from '../models/store-data.model';
-import { ShapeService } from './shape.service';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {

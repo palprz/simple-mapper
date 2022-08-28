@@ -11,4 +11,7 @@ export class Messages {
     'Uploaded file is not an image. Check if it has got image extension.';
 
   public static readonly ERROR_NOT_JSON = 'Uploaded file is not an JSON file.';
+
+  public static readonly ERROR_MISSING_DATA =
+    "Uploaded file hasn't got all required data (stageX, stageY, background, shapes).";
 }
