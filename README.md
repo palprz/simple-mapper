@@ -1,6 +1,6 @@
 # Simple Mapper
 
-A tool to create a map based on uploaded background (example: satellite image or floorplan)
+A tool to create a map based on uploaded background (example: satellite image or floorplan).
 
 ## Demo
 
